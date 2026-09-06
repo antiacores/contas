@@ -4,6 +4,8 @@ import { supabase } from '../../lib/supabase'
 import { AuthLayout } from './AuthLayout'
 import { FormField } from './components/FormField'
 import { SubmitButton } from './components/SubmitButton'
+import { GoogleButton } from './components/GoogleButton'
+import { Divider } from './components/Divider'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -81,6 +83,10 @@ export function LoginPage() {
           ¿Olvidaste tu contraseña?
         </Link>
       </form>
+            <div className="mt-6 flex flex-col gap-4">
+        <Divider label="o" />
+        <GoogleButton />
+      </div>
     </AuthLayout>
   )
 }
