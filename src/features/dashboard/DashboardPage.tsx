@@ -1,16 +1,23 @@
 import { Wallet, TrendingUp, Scale } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { DashboardHeader } from './components/DashboardHeader'
 import { SummaryCard } from './components/SummaryCard'
 import { RecentMovementsCard, type Movement } from './components/RecentMovementsCard'
+import { useAccounts } from '../accounts/useAccounts'
 
-// Fase 3: cascarón del dashboard con estados vacíos reales.
-// Los valores en null/[] representan "todavía no hay cuentas ni movimientos",
-// no "el saldo es cero" — esa distinción importa para la UI.
-// Cuando Fase 4 (Cuentas) y Fase 5 (Movimientos) existan, estos valores
-// se reemplazan por datos reales desde Supabase sin tocar el layout.
+// Fase 3: layout con estados vacíos. Fase 4: Saldo y Patrimonio ya
+// se calculan a partir de cuentas reales; Balance mensual sigue en null
+// hasta que existan movimientos (Fase 5).
 export function DashboardPage() {
-  const saldo: number | null = null
-  const patrimonio: number | null = null
+  const { accounts, loading } = useAccounts()
+
+  // Simplificación por ahora: las cuentas de crédito representan deuda
+  // (lo que se debe), así que restan del patrimonio en vez de sumar.
+  // Cuando exista un modelo de deudas/inversiones más completo, esto se refina.
+  const saldo = accounts.length === 0 ? null : sumByType(accounts, (t) => t !== 'credito')
+  const deuda = accounts.length === 0 ? 0 : sumByType(accounts, (t) => t === 'credito')
+  const patrimonio = accounts.length === 0 ? null : (saldo ?? 0) - deuda
+
   const balanceMensual: number | null = null
   const movimientos: Movement[] = []
 
@@ -22,13 +29,13 @@ export function DashboardPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <SummaryCard
             label="Saldo"
-            value={saldo}
+            value={loading ? null : saldo}
             emptyMessage="Añade una cuenta para ver tu saldo."
             icon={<Wallet size={18} strokeWidth={2} className="text-stone" />}
           />
           <SummaryCard
             label="Patrimonio"
-            value={patrimonio}
+            value={loading ? null : patrimonio}
             emptyMessage="Aún no hay patrimonio que mostrar."
             icon={<TrendingUp size={18} strokeWidth={2} className="text-stone" />}
           />
@@ -40,8 +47,22 @@ export function DashboardPage() {
           />
         </div>
 
+        <Link
+          to="/cuentas"
+          className="self-start text-sm font-medium text-charcoal underline hover:text-slate"
+        >
+          Administrar cuentas →
+        </Link>
+
         <RecentMovementsCard movements={movimientos} />
       </main>
     </div>
   )
+}
+
+function sumByType(
+  accounts: { type: string; balance: number }[],
+  predicate: (type: string) => boolean,
+): number {
+  return accounts.filter((a) => predicate(a.type)).reduce((total, a) => total + a.balance, 0)
 }
