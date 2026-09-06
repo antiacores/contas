@@ -6,6 +6,7 @@ import { RegisterPage } from './features/auth/RegisterPage'
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage'
 import { UpdatePasswordPage } from './features/auth/UpdatePasswordPage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
+import { AccountsPage } from './features/accounts/AccountsPage'
 
 function App() {
   return (
@@ -21,6 +22,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+                    <Route
+            path="/cuentas"
+            element={
+              <ProtectedRoute>
+                <AccountsPage />
               </ProtectedRoute>
             }
           />
