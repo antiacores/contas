@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paleta principal — neutros cálidos */
+  --color-warm-white: #FAF8F4;
+  --color-ivory: #F5F1EA;
+  --color-bone: #ECE6DB;
+  --color-beige: #DDD3C4;
+  --color-sand: #CBBBA5;
+  --color-stone: #A89D8D;
+  --color-taupe: #817768;
+  --color-slate: #5F5851;
+  --color-charcoal: #2F2B28;
+
+  /* Colores funcionales */
+  --color-success: #6F8E72;
+  --color-warning: #C69B5B;
+  --color-error: #A7645C;
+  --color-info: #8A9AA5;
+
+  /* Tipografía */
+  --font-sans: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
+
+  /* Bordes */
+  --radius-input: 12px;
+  --radius-button: 14px;
+  --radius-card: 18px;
+  --radius-modal: 24px;
+
+  /* Espaciado — sistema de 8 puntos */
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
+  --spacing-8: 64px;
+}
+
+body {
+  @apply bg-warm-white text-charcoal font-sans antialiased;
+}
