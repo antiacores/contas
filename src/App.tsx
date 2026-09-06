@@ -1,9 +1,32 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './lib/auth/AuthProvider'
+import { ProtectedRoute } from './routes/ProtectedRoute'
+import { LoginPage } from './features/auth/LoginPage'
+import { RegisterPage } from './features/auth/RegisterPage'
+import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage'
+import { UpdatePasswordPage } from './features/auth/UpdatePasswordPage'
+import { DashboardPage } from './features/dashboard/DashboardPage'
+
 function App() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-2 px-6 text-center">
-      <h1 className="text-3xl font-semibold text-charcoal">Contas</h1>
-      <p className="text-taupe">Tus finanzas, en orden.</p>
-    </main>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/registro" element={<RegisterPage />} />
+          <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
+          <Route path="/actualizar-contrasena" element={<UpdatePasswordPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 
