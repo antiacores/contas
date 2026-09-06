@@ -1,21 +1,47 @@
-import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../lib/auth/useAuth'
+import { Wallet, TrendingUp, Scale } from 'lucide-react'
+import { DashboardHeader } from './components/DashboardHeader'
+import { SummaryCard } from './components/SummaryCard'
+import { RecentMovementsCard, type Movement } from './components/RecentMovementsCard'
 
-// Placeholder de la Fase 3. Solo confirma que el login funciona
-// y que hay una sesión real conectada a Supabase.
+// Fase 3: cascarón del dashboard con estados vacíos reales.
+// Los valores en null/[] representan "todavía no hay cuentas ni movimientos",
+// no "el saldo es cero" — esa distinción importa para la UI.
+// Cuando Fase 4 (Cuentas) y Fase 5 (Movimientos) existan, estos valores
+// se reemplazan por datos reales desde Supabase sin tocar el layout.
 export function DashboardPage() {
-  const { user } = useAuth()
+  const saldo: number | null = null
+  const patrimonio: number | null = null
+  const balanceMensual: number | null = null
+  const movimientos: Movement[] = []
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-warm-white px-6 text-center">
-      <h1 className="text-2xl font-semibold text-charcoal">Bienvenido a Contas</h1>
-      <p className="text-taupe">Sesión iniciada como {user?.email}</p>
-      <button
-        onClick={() => supabase.auth.signOut()}
-        className="rounded-button border border-bone bg-ivory px-4 py-2 text-sm font-medium text-charcoal hover:bg-bone"
-      >
-        Cerrar sesión
-      </button>
-    </main>
+    <div className="min-h-screen bg-warm-white">
+      <DashboardHeader />
+
+      <main className="mx-auto flex max-w-4xl flex-col gap-4 px-6 pb-12 sm:px-10">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <SummaryCard
+            label="Saldo"
+            value={saldo}
+            emptyMessage="Añade una cuenta para ver tu saldo."
+            icon={<Wallet size={18} strokeWidth={2} className="text-stone" />}
+          />
+          <SummaryCard
+            label="Patrimonio"
+            value={patrimonio}
+            emptyMessage="Aún no hay patrimonio que mostrar."
+            icon={<TrendingUp size={18} strokeWidth={2} className="text-stone" />}
+          />
+          <SummaryCard
+            label="Balance mensual"
+            value={balanceMensual}
+            emptyMessage="Registra movimientos para ver tu balance."
+            icon={<Scale size={18} strokeWidth={2} className="text-stone" />}
+          />
+        </div>
+
+        <RecentMovementsCard movements={movimientos} />
+      </main>
+    </div>
   )
 }
