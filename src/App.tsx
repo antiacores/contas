@@ -7,6 +7,8 @@ import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage'
 import { UpdatePasswordPage } from './features/auth/UpdatePasswordPage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
 import { AccountsPage } from './features/accounts/AccountsPage'
+import { CategoriesPage } from './features/categories/CategoriesPage'
+import { MovementsPage } from './features/movements/MovementsPage'
 
 function App() {
   return (
@@ -30,6 +32,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <AccountsPage />
+              </ProtectedRoute>
+            }
+          />
+                    <Route
+            path="/categorias"
+            element={
+              <ProtectedRoute>
+                <CategoriesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/movimientos"
+            element={
+              <ProtectedRoute>
+                <MovementsPage />
               </ProtectedRoute>
             }
           />

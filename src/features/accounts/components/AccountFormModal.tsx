@@ -21,7 +21,7 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
   const [bankCustomName, setBankCustomName] = useState(initialKnownBank ? '' : initialBank)
   const [type, setType] = useState<AccountType>(account?.type ?? 'debito')
   const [color, setColor] = useState(account?.color ?? COLOR_OPTIONS[0])
-  const [balance, setBalance] = useState(String(account?.balance ?? 0))
+  const [balance, setBalance] = useState(String(account?.initial_balance ?? 0))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -54,7 +54,7 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
         bank: bankId === '' ? null : bankId === 'otro' ? bankCustomName.trim() || null : bankId,
         type,
         color,
-        balance: parsedBalance,
+        initial_balance: parsedBalance,
         currency: 'MXN',
       })
     } catch (err) {
@@ -155,9 +155,9 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
             </select>
           </div>
 
-          <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-1.5">
             <label htmlFor="balance" className="text-sm font-medium text-slate">
-              Saldo actual
+              Saldo inicial
             </label>
             <input
               id="balance"
@@ -168,6 +168,12 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
               className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-slate/40"
               required
             />
+            {account && (
+              <p className="text-xs text-stone">
+                El saldo que ves en la lista de cuentas ya incluye tus movimientos — esto solo ajusta el
+                punto de partida.
+              </p>
+            )}
           </div>
 
           <fieldset className="flex flex-col gap-1.5">
