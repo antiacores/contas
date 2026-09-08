@@ -50,7 +50,7 @@ export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: Acco
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="font-medium text-charcoal">{formatter.format(account.balance)}</span>
+        <span className="font-medium text-charcoal">{formatter.format(account.current_balance)}</span>
         <div className="flex gap-1">
           <button
             onClick={onEdit}
