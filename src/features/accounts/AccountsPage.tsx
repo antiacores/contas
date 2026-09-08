@@ -14,7 +14,7 @@ import { useAccounts } from './useAccounts'
 import { createAccount, deleteAccount, reorderAccounts, updateAccount } from './api/accounts'
 import { SortableAccountCard } from './components/SortableAccountCard'
 import { AccountFormModal } from './components/AccountFormModal'
-import { ConfirmDialog } from './components/ConfirmDialog'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 import type { Account, AccountInput } from './types'
 
 export function AccountsPage() {
