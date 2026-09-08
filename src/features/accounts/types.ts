@@ -9,6 +9,7 @@ export interface Account {
   color: string
   balance: number
   currency: string
+  position: number
   created_at: string
 }
 
