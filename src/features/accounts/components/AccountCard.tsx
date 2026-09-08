@@ -1,10 +1,13 @@
-import { Pencil, Trash2 } from 'lucide-react'
+import { GripVertical, Pencil, Trash2 } from 'lucide-react'
+import type { HTMLAttributes } from 'react'
 import { ACCOUNT_TYPE_LABELS, type Account } from '../types'
+import { BankBadge } from './BankBadge'
 
 interface AccountCardProps {
   account: Account
   onEdit: () => void
   onDelete: () => void
+  dragHandleProps?: HTMLAttributes<HTMLButtonElement>
 }
 
 const formatter = new Intl.NumberFormat('es-MX', {
@@ -13,10 +16,20 @@ const formatter = new Intl.NumberFormat('es-MX', {
   maximumFractionDigits: 2,
 })
 
-export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
+export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: AccountCardProps) {
   return (
     <div className="flex items-center justify-between rounded-card border border-bone bg-ivory p-5">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
+        {dragHandleProps && (
+          <button
+            {...dragHandleProps}
+            aria-label={`Reordenar ${account.name}`}
+            className="cursor-grab touch-none rounded-button p-1 text-stone hover:bg-bone active:cursor-grabbing"
+          >
+            <GripVertical size={16} />
+          </button>
+        )}
+
         <span
           aria-hidden="true"
           className="h-10 w-10 shrink-0 rounded-full"
@@ -24,10 +37,15 @@ export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
         />
         <div>
           <p className="font-medium text-charcoal">{account.name}</p>
-          <p className="text-sm text-taupe">
-            {ACCOUNT_TYPE_LABELS[account.type]}
-            {account.bank ? ` · ${account.bank}` : ''}
-          </p>
+          <div className="flex items-center gap-1.5 text-sm text-taupe">
+            <span>{ACCOUNT_TYPE_LABELS[account.type]}</span>
+            {account.bank && (
+              <>
+                <span>·</span>
+                <BankBadge bank={account.bank} />
+              </>
+            )}
+          </div>
         </div>
       </div>
 
