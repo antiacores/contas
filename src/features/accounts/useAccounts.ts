@@ -24,5 +24,5 @@ export function useAccounts() {
     refresh()
   }, [refresh])
 
-  return { accounts, loading, error, refresh }
+  return { accounts, loading, error, refresh, setAccounts }
 }
