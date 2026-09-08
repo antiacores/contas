@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { X } from 'lucide-react'
 import { ACCOUNT_TYPE_LABELS, type Account, type AccountInput, type AccountType } from '../types'
+import { BANKS, getBankById } from '../banks'
 
 interface AccountFormModalProps {
-  account: Account | null // null = crear nueva; con valor = editar
+  account: Account | null
   onClose: () => void
   onSubmit: (input: AccountInput) => Promise<void>
 }
@@ -14,14 +15,16 @@ const COLOR_OPTIONS = ['#817768', '#A89D8D', '#6F8E72', '#8A9AA5', '#C69B5B', '#
 
 export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModalProps) {
   const [name, setName] = useState(account?.name ?? '')
-  const [bank, setBank] = useState(account?.bank ?? '')
+  const initialBank = account?.bank ?? ''
+  const initialKnownBank = getBankById(initialBank)
+  const [bankId, setBankId] = useState(initialKnownBank ? initialKnownBank.id : initialBank ? 'otro' : '')
+  const [bankCustomName, setBankCustomName] = useState(initialKnownBank ? '' : initialBank)
   const [type, setType] = useState<AccountType>(account?.type ?? 'debito')
   const [color, setColor] = useState(account?.color ?? COLOR_OPTIONS[0])
   const [balance, setBalance] = useState(String(account?.balance ?? 0))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Cierra el modal con Escape, por accesibilidad de teclado (DESIGN_SYSTEM.md lo exige).
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') onClose()
@@ -48,7 +51,7 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
     try {
       await onSubmit({
         name: name.trim(),
-        bank: bank.trim() || null,
+        bank: bankId === '' ? null : bankId === 'otro' ? bankCustomName.trim() || null : bankId,
         type,
         color,
         balance: parsedBalance,
@@ -104,14 +107,35 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
             <label htmlFor="bank" className="text-sm font-medium text-slate">
               Banco (opcional)
             </label>
-            <input
+            <select
               id="bank"
-              value={bank}
-              onChange={(e) => setBank(e.target.value)}
-              placeholder="Ej. BBVA"
-              className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal placeholder:text-stone focus:outline-none focus:ring-2 focus:ring-slate/40"
-            />
+              value={bankId}
+              onChange={(e) => setBankId(e.target.value)}
+              className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-slate/40"
+            >
+              <option value="">Sin banco</option>
+              {BANKS.map((bank) => (
+                <option key={bank.id} value={bank.id}>
+                  {bank.name}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {bankId === 'otro' && (
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="bank-custom" className="text-sm font-medium text-slate">
+                Nombre del banco
+              </label>
+              <input
+                id="bank-custom"
+                value={bankCustomName}
+                onChange={(e) => setBankCustomName(e.target.value)}
+                placeholder="Ej. Banco Regional"
+                className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal placeholder:text-stone focus:outline-none focus:ring-2 focus:ring-slate/40"
+              />
+            </div>
+          )}
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="type" className="text-sm font-medium text-slate">
