@@ -6,11 +6,13 @@ import { createBudget, deleteBudget, updateBudget } from './api/budgets'
 import { useCategories } from '../categories/useCategories'
 import { BudgetProgressCard } from './components/BudgetProgressCard'
 import { BudgetFormModal } from './components/BudgetFormModal'
+import { PeriodSelector } from './components/PeriodSelector'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
-import type { Budget, BudgetInput, BudgetWithProgress } from './types'
+import { currentPeriod, type Budget, type BudgetInput, type BudgetPeriod, type BudgetWithProgress } from './types'
 
 export function BudgetsPage() {
-  const { budgets, loading, error, refresh } = useBudgets()
+  const [period, setPeriod] = useState<BudgetPeriod>(currentPeriod())
+  const { budgets, loading, error, refresh } = useBudgets(period)
   const { categories } = useCategories()
   const [editingBudget, setEditingBudget] = useState<Budget | null | undefined>(undefined)
   const [deletingBudget, setDeletingBudget] = useState<BudgetWithProgress | null>(null)
@@ -76,6 +78,8 @@ export function BudgetsPage() {
           </p>
         )}
 
+        {!noGastoCategories && <PeriodSelector period={period} onChange={setPeriod} />}
+
         {loading && <p className="py-10 text-center text-sm text-stone">Cargando…</p>}
 
         {error && (
@@ -100,6 +104,7 @@ export function BudgetsPage() {
           <BudgetProgressCard
             key={budget.id}
             budget={budget}
+            isAnnual={period.month === null}
             onEdit={() => setEditingBudget(budget)}
             onDelete={() => setDeletingBudget(budget)}
           />
