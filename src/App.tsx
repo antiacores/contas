@@ -12,6 +12,7 @@ import { MovementsPage } from './features/movements/MovementsPage'
 import { BudgetsPage } from './features/budgets/BudgetsPage'
 import { GoalsPage } from './features/goals/GoalsPage'
 import { GoalDetailPage } from './features/goals/GoalDetailPage'
+import { StatisticsPage } from './features/statistics/StatisticsPage'
 
 function App() {
   return (
@@ -75,6 +76,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <GoalDetailPage />
+              </ProtectedRoute>
+            }
+          />
+                    <Route
+            path="/estadisticas"
+            element={
+              <ProtectedRoute>
+                <StatisticsPage />
               </ProtectedRoute>
             }
           />

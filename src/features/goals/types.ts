@@ -6,7 +6,7 @@ export interface Goal {
   target_date: string | null
   color: string
   created_at: string
-  current_amount: number // calculado en la vista goals_with_progress
+  current_amount: number
 }
 
 export type GoalInput = Pick<Goal, 'name' | 'target_amount' | 'target_date' | 'color'>
@@ -20,10 +20,7 @@ export interface GoalContribution {
   date: string
   note: string | null
   created_at: string
-  account_name?: string | null // enriquecido vía join, solo lectura
+  account_name?: string | null
 }
 
-export type GoalContributionInput = Pick
-  GoalContribution,
-  'goal_id' | 'account_id' | 'amount' | 'date' | 'note'
->
+export type GoalContributionInput = Pick<GoalContribution, 'goal_id' | 'account_id' | 'amount' | 'date' | 'note'>

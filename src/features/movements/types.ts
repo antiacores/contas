@@ -9,19 +9,15 @@ export interface Movement {
   type: MovementType
   description: string | null
   amount: number
-  date: string // YYYY-MM-DD
+  date: string
   created_at: string
-  // Campos "enriquecidos" vía join, solo para lectura/despliegue:
   account_name?: string
   transfer_account_name?: string | null
   category_name?: string | null
   category_color?: string | null
 }
 
-export type MovementInput = Pick
-  Movement,
-  'account_id' | 'transfer_account_id' | 'category_id' | 'type' | 'description' | 'amount' | 'date'
->
+export type MovementInput = Pick<Movement, 'account_id' | 'transfer_account_id' | 'category_id' | 'type' | 'description' | 'amount' | 'date'>
 
 export const MOVEMENT_TYPE_LABELS: Record<MovementType, string> = {
   ingreso: 'Ingreso',

@@ -79,6 +79,9 @@ export function DashboardPage() {
                     <Link to="/metas" className="font-medium text-charcoal underline hover:text-slate">
             Metas →
           </Link>
+                    <Link to="/estadisticas" className="font-medium text-charcoal underline hover:text-slate">
+            Estadísticas →
+          </Link>
         </div>
 
         <RecentMovementsCard movements={recentMovements} loading={recentLoading} />
