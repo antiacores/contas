@@ -1,14 +1,22 @@
 import { useState, type FormEvent } from 'react'
 import { X } from 'lucide-react'
+import type { Account } from '../../accounts/types'
 import type { GoalContributionInput } from '../types'
 
 interface ContributionFormModalProps {
   goalId: string
+  accounts: Account[]
   onClose: () => void
   onSubmit: (input: GoalContributionInput) => Promise<void>
 }
 
-export function ContributionFormModal({ goalId, onClose, onSubmit }: ContributionFormModalProps) {
+export function ContributionFormModal({
+  goalId,
+  accounts,
+  onClose,
+  onSubmit,
+}: ContributionFormModalProps) {
+  const [accountId, setAccountId] = useState(accounts[0]?.id ?? '')
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [note, setNote] = useState('')
@@ -19,6 +27,11 @@ export function ContributionFormModal({ goalId, onClose, onSubmit }: Contributio
     event.preventDefault()
     setError(null)
 
+    if (!accountId) {
+      setError('Elige de qué cuenta sale el dinero.')
+      return
+    }
+
     const parsedAmount = Number(amount)
     if (Number.isNaN(parsedAmount) || parsedAmount === 0) {
       setError('El monto debe ser un número distinto de cero.')
@@ -27,7 +40,13 @@ export function ContributionFormModal({ goalId, onClose, onSubmit }: Contributio
 
     setLoading(true)
     try {
-      await onSubmit({ goal_id: goalId, amount: parsedAmount, date, note: note.trim() || null })
+      await onSubmit({
+        goal_id: goalId,
+        account_id: accountId,
+        amount: parsedAmount,
+        date,
+        note: note.trim() || null,
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar la aportación.')
       setLoading(false)
@@ -61,6 +80,25 @@ export function ContributionFormModal({ goalId, onClose, onSubmit }: Contributio
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1.5">
+            <label htmlFor="account" className="text-sm font-medium text-slate">
+              ¿De qué cuenta sale el dinero?
+            </label>
+            <select
+              id="account"
+              value={accountId}
+              onChange={(e) => setAccountId(e.target.value)}
+              className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-slate/40"
+              required
+            >
+              {accounts.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
             <label htmlFor="amount" className="text-sm font-medium text-slate">
               Monto
             </label>
@@ -73,7 +111,9 @@ export function ContributionFormModal({ goalId, onClose, onSubmit }: Contributio
               className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-slate/40"
               required
             />
-            <p className="text-xs text-stone">Usa un número negativo para retirar de la meta.</p>
+            <p className="text-xs text-stone">
+              Usa un número negativo para retirar de la meta — el dinero regresa a la cuenta elegida.
+            </p>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -111,7 +151,7 @@ export function ContributionFormModal({ goalId, onClose, onSubmit }: Contributio
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !accountId}
             className="mt-2 rounded-button bg-charcoal px-4 py-3 font-medium text-warm-white transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? 'Guardando…' : 'Agregar aportación'}

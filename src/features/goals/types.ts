@@ -15,10 +15,15 @@ export interface GoalContribution {
   id: string
   user_id: string
   goal_id: string
+  account_id: string | null
   amount: number
   date: string
   note: string | null
   created_at: string
+  account_name?: string | null // enriquecido vía join, solo lectura
 }
 
-export type GoalContributionInput = Pick<GoalContribution, 'goal_id' | 'amount' | 'date' | 'note'>
+export type GoalContributionInput = Pick
+  GoalContribution,
+  'goal_id' | 'account_id' | 'amount' | 'date' | 'note'
+>

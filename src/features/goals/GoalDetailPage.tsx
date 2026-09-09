@@ -3,6 +3,7 @@ import { ArrowLeft, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useGoals } from './useGoals'
 import { useGoalContributions } from './useGoalContributions'
+import { useAccounts } from '../accounts/useAccounts'
 import { updateGoal, deleteGoal } from './api/goals'
 import { createContribution, deleteContribution } from './api/contributions'
 import { GoalFormModal } from './components/GoalFormModal'
@@ -22,6 +23,7 @@ export function GoalDetailPage() {
   const { goalId } = useParams<{ goalId: string }>()
   const navigate = useNavigate()
   const { goals, refresh: refreshGoals } = useGoals()
+  const { accounts, refresh: refreshAccounts } = useAccounts()
   const { contributions, loading, error, refresh: refreshContributions } = useGoalContributions(
     goalId ?? '',
   )
@@ -53,14 +55,14 @@ export function GoalDetailPage() {
   async function handleAddContribution(input: Parameters<typeof createContribution>[0]) {
     await createContribution(input)
     setShowAddContribution(false)
-    await Promise.all([refreshContributions(), refreshGoals()])
+    await Promise.all([refreshContributions(), refreshGoals(), refreshAccounts()])
   }
 
   async function handleConfirmDeleteContribution() {
     if (!deletingContribution) return
     await deleteContribution(deletingContribution.id)
     setDeletingContribution(null)
-    await Promise.all([refreshContributions(), refreshGoals()])
+    await Promise.all([refreshContributions(), refreshGoals(), refreshAccounts()])
   }
 
   async function handleConfirmDeleteGoal() {
@@ -132,12 +134,22 @@ export function GoalDetailPage() {
           <h2 className="text-sm font-medium text-taupe">Historial de aportaciones</h2>
           <button
             onClick={() => setShowAddContribution(true)}
-            className="flex items-center gap-2 rounded-button bg-charcoal px-3 py-1.5 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40"
+            disabled={accounts.length === 0}
+            className="flex items-center gap-2 rounded-button bg-charcoal px-3 py-1.5 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Plus size={14} />
             Agregar
           </button>
         </div>
+
+        {accounts.length === 0 && (
+          <p className="rounded-card border border-bone bg-ivory p-4 text-center text-sm text-stone">
+            Necesitas al menos una cuenta para registrar aportaciones.{' '}
+            <Link to="/cuentas" className="font-medium text-charcoal underline">
+              Crear cuenta
+            </Link>
+          </p>
+        )}
 
         {loading && <p className="py-6 text-center text-sm text-stone">Cargando…</p>}
 
@@ -161,6 +173,7 @@ export function GoalDetailPage() {
                 <p className="text-charcoal">{contribution.note || 'Aportación'}</p>
                 <p className="text-xs text-stone">
                   {dateFormatter.format(new Date(`${contribution.date}T00:00:00`))}
+                  {contribution.account_name ? ` · ${contribution.account_name}` : ''}
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -189,6 +202,7 @@ export function GoalDetailPage() {
       {showAddContribution && (
         <ContributionFormModal
           goalId={goal.id}
+          accounts={accounts}
           onClose={() => setShowAddContribution(false)}
           onSubmit={handleAddContribution}
         />
