@@ -73,6 +73,9 @@ export function DashboardPage() {
           <Link to="/categorias" className="font-medium text-charcoal underline hover:text-slate">
             Categorías →
           </Link>
+                    <Link to="/presupuestos" className="font-medium text-charcoal underline hover:text-slate">
+            Presupuestos →
+          </Link>
         </div>
 
         <RecentMovementsCard movements={recentMovements} loading={recentLoading} />
