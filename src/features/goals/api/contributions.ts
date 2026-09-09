@@ -34,3 +34,11 @@ export async function deleteContribution(id: string): Promise<void> {
   const { error } = await supabase.from('goal_contributions').delete().eq('id', id)
   if (error) throw error
 }
+
+// Usado por Estadísticas para reconstruir el patrimonio histórico —
+// necesita las aportaciones de TODAS las metas, no solo una.
+export async function listAllContributions(): Promise<GoalContribution[]> {
+  const { data, error } = await supabase.from('goal_contributions').select('*')
+  if (error) throw error
+  return data as GoalContribution[]
+}
