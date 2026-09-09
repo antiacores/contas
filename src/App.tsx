@@ -10,6 +10,8 @@ import { AccountsPage } from './features/accounts/AccountsPage'
 import { CategoriesPage } from './features/categories/CategoriesPage'
 import { MovementsPage } from './features/movements/MovementsPage'
 import { BudgetsPage } from './features/budgets/BudgetsPage'
+import { GoalsPage } from './features/goals/GoalsPage'
+import { GoalDetailPage } from './features/goals/GoalDetailPage'
 
 function App() {
   return (
@@ -57,6 +59,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <BudgetsPage />
+              </ProtectedRoute>
+            }
+          />
+                    <Route
+            path="/metas"
+            element={
+              <ProtectedRoute>
+                <GoalsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/metas/:goalId"
+            element={
+              <ProtectedRoute>
+                <GoalDetailPage />
               </ProtectedRoute>
             }
           />
