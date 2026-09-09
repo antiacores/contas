@@ -9,6 +9,7 @@ import { DashboardPage } from './features/dashboard/DashboardPage'
 import { AccountsPage } from './features/accounts/AccountsPage'
 import { CategoriesPage } from './features/categories/CategoriesPage'
 import { MovementsPage } from './features/movements/MovementsPage'
+import { BudgetsPage } from './features/budgets/BudgetsPage'
 
 function App() {
   return (
@@ -48,6 +49,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MovementsPage />
+              </ProtectedRoute>
+            }
+          />
+                    <Route
+            path="/presupuestos"
+            element={
+              <ProtectedRoute>
+                <BudgetsPage />
               </ProtectedRoute>
             }
           />
