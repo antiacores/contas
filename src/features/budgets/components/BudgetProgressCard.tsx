@@ -3,6 +3,7 @@ import type { BudgetWithProgress } from '../types'
 
 interface BudgetProgressCardProps {
   budget: BudgetWithProgress
+  isAnnual: boolean
   onEdit: () => void
   onDelete: () => void
 }
@@ -13,9 +14,9 @@ const formatter = new Intl.NumberFormat('es-MX', {
   maximumFractionDigits: 2,
 })
 
-export function BudgetProgressCard({ budget, onEdit, onDelete }: BudgetProgressCardProps) {
-  const percent = Math.min((budget.spent / budget.amount) * 100, 100)
-  const isOver = budget.spent > budget.amount
+export function BudgetProgressCard({ budget, isAnnual, onEdit, onDelete }: BudgetProgressCardProps) {
+  const percent = Math.min((budget.spent / budget.target) * 100, 100)
+  const isOver = budget.spent > budget.target
   const isNearLimit = !isOver && percent >= 80
 
   const barColor = isOver ? 'bg-error' : isNearLimit ? 'bg-warning' : 'bg-success'
@@ -68,11 +69,15 @@ export function BudgetProgressCard({ budget, onEdit, onDelete }: BudgetProgressC
 
       <div className="flex items-center justify-between text-sm">
         <span className={textColor}>
-          {formatter.format(budget.spent)} de {formatter.format(budget.amount)}
+          {formatter.format(budget.spent)} de {formatter.format(budget.target)}
         </span>
         {isOver && <span className="font-medium text-error">Excedido</span>}
         {isNearLimit && <span className="font-medium text-warning">Cerca del límite</span>}
       </div>
+
+      {isAnnual && (
+        <p className="text-xs text-stone">Presupuesto mensual: {formatter.format(budget.amount)}</p>
+      )}
     </div>
   )
 }
