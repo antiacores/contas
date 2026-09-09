@@ -2,14 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { listBudgets } from './api/budgets'
 import { listMovements } from '../movements/api/movements'
 import { DEFAULT_FILTERS } from '../movements/types'
-import type { BudgetWithProgress } from './types'
+import { getPeriodRange } from './dateRange'
+import { currentPeriod, type BudgetPeriod, type BudgetWithProgress } from './types'
 
-function startOfMonth(): string {
-  const now = new Date()
-  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
-}
-
-export function useBudgets() {
+export function useBudgets(period: BudgetPeriod = currentPeriod()) {
   const [budgets, setBudgets] = useState<BudgetWithProgress[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -18,15 +14,14 @@ export function useBudgets() {
     setLoading(true)
     setError(null)
     try {
-      const [budgetsList, gastosDelMes] = await Promise.all([
+      const { start, end } = getPeriodRange(period)
+      const [budgetsList, gastosDelPeriodo] = await Promise.all([
         listBudgets(),
-        listMovements({ ...DEFAULT_FILTERS, type: 'gasto', dateFrom: startOfMonth() }),
+        listMovements({ ...DEFAULT_FILTERS, type: 'gasto', dateFrom: start, dateTo: end }),
       ])
 
-      // Suma lo gastado este mes, agrupado por categoría — se calcula en el
-      // cliente reutilizando los movimientos ya filtrados, sin una vista SQL extra.
       const spentByCategory = new Map<string, number>()
-      for (const movement of gastosDelMes) {
+      for (const movement of gastosDelPeriodo) {
         if (!movement.category_id) continue
         spentByCategory.set(
           movement.category_id,
@@ -34,10 +29,14 @@ export function useBudgets() {
         )
       }
 
+      // En modo "año completo" (month=null), la meta es el presupuesto mensual x 12.
+      const multiplier = period.month === null ? 12 : 1
+
       setBudgets(
         budgetsList.map((budget) => ({
           ...budget,
           spent: spentByCategory.get(budget.category_id) ?? 0,
+          target: budget.amount * multiplier,
         })),
       )
     } catch (err) {
@@ -45,7 +44,7 @@ export function useBudgets() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [period.year, period.month])
 
   useEffect(() => {
     refresh()
