@@ -3,6 +3,7 @@ import { X } from 'lucide-react'
 import type { Account } from '../../accounts/types'
 import type { Category } from '../../categories/types'
 import { FREQUENCY_LABELS, type Subscription, type SubscriptionFrequency, type SubscriptionInput } from '../types'
+import { SUBSCRIPTION_SERVICES, findServiceByName } from '../services'
 
 interface SubscriptionFormModalProps {
   subscription: Subscription | null
@@ -23,7 +24,9 @@ export function SubscriptionFormModal({
   onClose,
   onSubmit,
 }: SubscriptionFormModalProps) {
-  const [name, setName] = useState(subscription?.name ?? '')
+  const initialService = subscription ? findServiceByName(subscription.name) : undefined
+  const [serviceKey, setServiceKey] = useState(initialService ? initialService.name : 'otro')
+  const [customName, setCustomName] = useState(initialService ? '' : subscription?.name ?? '')
   const [amount, setAmount] = useState(subscription ? String(subscription.amount) : '')
   const [frequency, setFrequency] = useState<SubscriptionFrequency>(subscription?.frequency ?? 'mensual')
   const [nextPaymentDate, setNextPaymentDate] = useState(
@@ -41,7 +44,8 @@ export function SubscriptionFormModal({
     event.preventDefault()
     setError(null)
 
-    if (!name.trim()) {
+    const finalName = serviceKey === 'otro' ? customName.trim() : serviceKey
+    if (!finalName) {
       setError('El nombre del servicio es obligatorio.')
       return
     }
@@ -58,7 +62,7 @@ export function SubscriptionFormModal({
     setLoading(true)
     try {
       await onSubmit({
-        name: name.trim(),
+        name: finalName,
         amount: parsedAmount,
         frequency,
         next_payment_date: nextPaymentDate,
@@ -100,18 +104,39 @@ export function SubscriptionFormModal({
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="name" className="text-sm font-medium text-slate">
+            <label htmlFor="service" className="text-sm font-medium text-slate">
               Servicio
             </label>
-            <input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Ej. Netflix"
-              className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal placeholder:text-stone focus:outline-none focus:ring-2 focus:ring-slate/40"
-              required
-            />
+            <select
+              id="service"
+              value={serviceKey}
+              onChange={(e) => setServiceKey(e.target.value)}
+              className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-slate/40"
+            >
+              <option value="otro">Otro</option>
+              {SUBSCRIPTION_SERVICES.map((service) => (
+                <option key={service.name} value={service.name}>
+                  {service.name}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {serviceKey === 'otro' && (
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="custom-name" className="text-sm font-medium text-slate">
+                Nombre del servicio
+              </label>
+              <input
+                id="custom-name"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                placeholder="Ej. Gimnasio local"
+                className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal placeholder:text-stone focus:outline-none focus:ring-2 focus:ring-slate/40"
+                required
+              />
+            </div>
+          )}
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="amount" className="text-sm font-medium text-slate">
@@ -200,6 +225,7 @@ export function SubscriptionFormModal({
 
           <fieldset className="flex flex-col gap-1.5">
             <legend className="text-sm font-medium text-slate">Color</legend>
+            <p className="text-xs text-stone">Se usa solo si el servicio no tiene un logo disponible.</p>
             <div className="flex flex-wrap gap-2">
               {COLOR_OPTIONS.map((option) => (
                 <button
