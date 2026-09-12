@@ -43,9 +43,21 @@ export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: Acco
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="font-medium text-charcoal">
-          {formatCurrency(account.current_balance, settings.currency)}
-        </span>
+        {account.type === 'credito' && account.credit_limit ? (
+          <div className="text-right">
+            <span className="block font-medium text-charcoal">
+              {formatCurrency(Math.max(account.credit_limit + account.current_balance, 0), settings.currency)}
+              <span className="ml-1 text-xs font-normal text-stone">disponible</span>
+            </span>
+            <span className="text-xs text-stone">
+              de {formatCurrency(account.credit_limit, settings.currency)}
+            </span>
+          </div>
+        ) : (
+          <span className="font-medium text-charcoal">
+            {formatCurrency(account.current_balance, settings.currency)}
+          </span>
+        )}
         <div className="flex gap-1">
           <button
             onClick={onEdit}
