@@ -40,3 +40,14 @@
 body {
   @apply bg-warm-white text-charcoal font-sans antialiased;
 }
+
+/* Oculta la barra de scroll visualmente sin quitar la función de desplazarse.
+   Se usa en los modales, donde el scroll es necesario pero la barra
+   distrae del diseño minimalista. */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE y Edge viejo */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge nuevo */
+}
