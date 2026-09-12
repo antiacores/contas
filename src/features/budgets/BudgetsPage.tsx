@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useBudgets } from './useBudgets'
 import { createBudget, deleteBudget, updateBudget } from './api/budgets'
@@ -8,6 +8,7 @@ import { BudgetProgressCard } from './components/BudgetProgressCard'
 import { BudgetFormModal } from './components/BudgetFormModal'
 import { PeriodSelector } from './components/PeriodSelector'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { PageHeader } from '../../components/PageHeader'
 import { currentPeriod, type Budget, type BudgetInput, type BudgetPeriod, type BudgetWithProgress } from './types'
 
 export function BudgetsPage() {
@@ -45,30 +46,22 @@ export function BudgetsPage() {
   const noAvailableCategories = !editingBudget && availableCategories.length === 0
 
   return (
-    <div className="min-h-screen bg-warm-white">
-      <header className="flex items-center justify-between px-6 py-6 sm:px-10">
-        <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            aria-label="Volver al dashboard"
-            className="rounded-button p-2 text-taupe hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
+    <div>
+      <PageHeader
+        title="Presupuestos"
+        action={
+          <button
+            onClick={() => setEditingBudget(null)}
+            disabled={noGastoCategories || noAvailableCategories}
+            className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <ArrowLeft size={20} />
-          </Link>
-          <h1 className="text-xl font-semibold text-charcoal">Presupuestos</h1>
-        </div>
+            <Plus size={16} />
+            Nuevo presupuesto
+          </button>
+        }
+      />
 
-        <button
-          onClick={() => setEditingBudget(null)}
-          disabled={noGastoCategories || noAvailableCategories}
-          className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <Plus size={16} />
-          Nuevo presupuesto
-        </button>
-      </header>
-
-      <main className="mx-auto flex max-w-3xl flex-col gap-3 px-6 pb-12 sm:px-10">
+      <div className="mx-auto flex max-w-3xl flex-col gap-3 px-4 pb-12 sm:px-6 lg:px-10">
         {noGastoCategories && !loading && (
           <p className="rounded-card border border-bone bg-ivory p-4 text-center text-sm text-stone">
             Necesitas categorías de gasto antes de crear presupuestos.{' '}
@@ -109,7 +102,7 @@ export function BudgetsPage() {
             onDelete={() => setDeletingBudget(budget)}
           />
         ))}
-      </main>
+      </div>
 
       {editingBudget !== undefined && (
         <BudgetFormModal

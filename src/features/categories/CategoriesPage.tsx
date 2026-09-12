@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { ArrowLeft, Pencil, Plus, Trash2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useCategories } from './useCategories'
 import { createCategory, createCategories, deleteCategory, updateCategory } from './api/categories'
 import { CategoryFormModal } from './components/CategoryFormModal'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { PageHeader } from '../../components/PageHeader'
 import { SUGGESTED_CATEGORIES, type Category, type CategoryInput } from './types'
 
 export function CategoriesPage() {
@@ -44,29 +44,21 @@ export function CategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-warm-white">
-      <header className="flex items-center justify-between px-6 py-6 sm:px-10">
-        <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            aria-label="Volver al dashboard"
-            className="rounded-button p-2 text-taupe hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
+    <div>
+      <PageHeader
+        title="Categorías"
+        action={
+          <button
+            onClick={() => setEditingCategory(null)}
+            className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40"
           >
-            <ArrowLeft size={20} />
-          </Link>
-          <h1 className="text-xl font-semibold text-charcoal">Categorías</h1>
-        </div>
+            <Plus size={16} />
+            Nueva categoría
+          </button>
+        }
+      />
 
-        <button
-          onClick={() => setEditingCategory(null)}
-          className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40"
-        >
-          <Plus size={16} />
-          Nueva categoría
-        </button>
-      </header>
-
-      <main className="mx-auto flex max-w-3xl flex-col gap-6 px-6 pb-12 sm:px-10">
+      <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-12 sm:px-6 lg:px-10">
         {loading && <p className="py-10 text-center text-sm text-stone">Cargando…</p>}
 
         {error && (
@@ -123,7 +115,7 @@ export function CategoriesPage() {
             ))}
           </section>
         )}
-      </main>
+      </div>
 
       {editingCategory !== undefined && (
         <CategoryFormModal

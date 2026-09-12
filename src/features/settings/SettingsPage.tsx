@@ -1,24 +1,15 @@
-import { ArrowLeft, LogOut } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { LogOut } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { ProfileSection } from './components/ProfileSection'
 import { PreferencesSection } from './components/PreferencesSection'
+import { PageHeader } from '../../components/PageHeader'
 
 export function SettingsPage() {
   return (
-    <div className="min-h-screen bg-warm-white">
-      <header className="flex items-center gap-3 px-6 py-6 sm:px-10">
-        <Link
-          to="/"
-          aria-label="Volver al dashboard"
-          className="rounded-button p-2 text-taupe hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
-        >
-          <ArrowLeft size={20} />
-        </Link>
-        <h1 className="text-xl font-semibold text-charcoal">Configuración</h1>
-      </header>
+    <div>
+      <PageHeader title="Configuración" />
 
-      <main className="mx-auto flex max-w-2xl flex-col gap-4 px-6 pb-12 sm:px-10">
+      <div className="mx-auto flex max-w-2xl flex-col gap-4 px-4 pb-12 sm:px-6 lg:px-10">
         <ProfileSection />
         <PreferencesSection />
 
@@ -29,7 +20,7 @@ export function SettingsPage() {
           <LogOut size={16} />
           Cerrar sesión
         </button>
-      </main>
+      </div>
     </div>
   )
 }

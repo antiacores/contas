@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useMovements } from './useMovements'
 import { createMovement, deleteMovement, updateMovement } from './api/movements'
@@ -9,6 +9,7 @@ import { MovementRow } from './components/MovementRow'
 import { MovementFormModal } from './components/MovementFormModal'
 import { MovementFiltersBar } from './components/MovementFiltersBar'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { PageHeader } from '../../components/PageHeader'
 import type { Movement, MovementInput } from './types'
 
 export function MovementsPage() {
@@ -38,30 +39,22 @@ export function MovementsPage() {
   const noAccounts = accounts.length === 0
 
   return (
-    <div className="min-h-screen bg-warm-white">
-      <header className="flex items-center justify-between px-6 py-6 sm:px-10">
-        <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            aria-label="Volver al dashboard"
-            className="rounded-button p-2 text-taupe hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
+    <div>
+      <PageHeader
+        title="Movimientos"
+        action={
+          <button
+            onClick={() => setEditingMovement(null)}
+            disabled={noAccounts}
+            className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <ArrowLeft size={20} />
-          </Link>
-          <h1 className="text-xl font-semibold text-charcoal">Movimientos</h1>
-        </div>
+            <Plus size={16} />
+            Nuevo movimiento
+          </button>
+        }
+      />
 
-        <button
-          onClick={() => setEditingMovement(null)}
-          disabled={noAccounts}
-          className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <Plus size={16} />
-          Nuevo movimiento
-        </button>
-      </header>
-
-      <main className="mx-auto flex max-w-3xl flex-col gap-4 px-6 pb-12 sm:px-10">
+      <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 pb-12 sm:px-6 lg:px-10">
         {noAccounts && !loading && (
           <p className="rounded-card border border-bone bg-ivory p-4 text-center text-sm text-stone">
             Necesitas al menos una cuenta antes de registrar movimientos.{' '}
@@ -95,7 +88,7 @@ export function MovementsPage() {
             />
           ))}
         </div>
-      </main>
+      </div>
 
       {editingMovement !== undefined && (
         <MovementFormModal
