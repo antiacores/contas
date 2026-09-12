@@ -2,9 +2,10 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { X } from 'lucide-react'
 import { ACCOUNT_TYPE_LABELS, type Account, type AccountInput, type AccountType } from '../types'
 import { BANKS, getBankById } from '../banks'
+import { useSettings } from '../../../lib/settings/useSettings'
 
 interface AccountFormModalProps {
-  account: Account | null
+  account: Account | null // null = crear nueva; con valor = editar
   onClose: () => void
   onSubmit: (input: AccountInput) => Promise<void>
 }
@@ -14,6 +15,7 @@ const ACCOUNT_TYPES = Object.keys(ACCOUNT_TYPE_LABELS) as AccountType[]
 const COLOR_OPTIONS = ['#817768', '#A89D8D', '#6F8E72', '#8A9AA5', '#C69B5B', '#A7645C']
 
 export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModalProps) {
+  const { settings } = useSettings()
   const [name, setName] = useState(account?.name ?? '')
   const initialBank = account?.bank ?? ''
   const initialKnownBank = getBankById(initialBank)
@@ -25,6 +27,7 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Cierra el modal con Escape, por accesibilidad de teclado (DESIGN_SYSTEM.md lo exige).
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') onClose()
@@ -55,7 +58,7 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
         type,
         color,
         initial_balance: parsedBalance,
-        currency: 'MXN',
+        currency: account?.currency ?? settings.currency,
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar la cuenta.')
@@ -155,7 +158,7 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
             </select>
           </div>
 
-                    <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5">
             <label htmlFor="balance" className="text-sm font-medium text-slate">
               Saldo inicial
             </label>

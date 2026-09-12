@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './lib/auth/AuthProvider'
+import { SettingsProvider } from './lib/settings/SettingsProvider'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { LoginPage } from './features/auth/LoginPage'
 import { RegisterPage } from './features/auth/RegisterPage'
@@ -33,6 +34,9 @@ const GoalDetailPage = lazy(() =>
 const StatisticsPage = lazy(() =>
   import('./features/statistics/StatisticsPage').then((m) => ({ default: m.StatisticsPage })),
 )
+const SettingsPage = lazy(() =>
+  import('./features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })),
+)
 
 function PageLoader() {
   return (
@@ -46,78 +50,88 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/registro" element={<RegisterPage />} />
-            <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
-            <Route path="/actualizar-contrasena" element={<UpdatePasswordPage />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/cuentas"
-              element={
-                <ProtectedRoute>
-                  <AccountsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/categorias"
-              element={
-                <ProtectedRoute>
-                  <CategoriesPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/movimientos"
-              element={
-                <ProtectedRoute>
-                  <MovementsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/presupuestos"
-              element={
-                <ProtectedRoute>
-                  <BudgetsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/metas"
-              element={
-                <ProtectedRoute>
-                  <GoalsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/metas/:goalId"
-              element={
-                <ProtectedRoute>
-                  <GoalDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/estadisticas"
-              element={
-                <ProtectedRoute>
-                  <StatisticsPage />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </Suspense>
+        <SettingsProvider>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/registro" element={<RegisterPage />} />
+              <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
+              <Route path="/actualizar-contrasena" element={<UpdatePasswordPage />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/cuentas"
+                element={
+                  <ProtectedRoute>
+                    <AccountsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/categorias"
+                element={
+                  <ProtectedRoute>
+                    <CategoriesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/movimientos"
+                element={
+                  <ProtectedRoute>
+                    <MovementsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/presupuestos"
+                element={
+                  <ProtectedRoute>
+                    <BudgetsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/metas"
+                element={
+                  <ProtectedRoute>
+                    <GoalsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/metas/:goalId"
+                element={
+                  <ProtectedRoute>
+                    <GoalDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/estadisticas"
+                element={
+                  <ProtectedRoute>
+                    <StatisticsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/configuracion"
+                element={
+                  <ProtectedRoute>
+                    <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </Suspense>
+        </SettingsProvider>
       </AuthProvider>
     </BrowserRouter>
   )
