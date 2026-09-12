@@ -3,6 +3,7 @@ import { FREQUENCY_LABELS, type Subscription } from '../types'
 import { daysUntil } from '../dateUtils'
 import { useSettings } from '../../../lib/settings/useSettings'
 import { formatCurrency } from '../../../lib/format'
+import { SubscriptionLogo } from './SubscriptionLogo'
 
 interface SubscriptionCardProps {
   subscription: Subscription
@@ -29,16 +30,14 @@ export function SubscriptionCard({
   return (
     <div className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-5">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span
-            aria-hidden="true"
-            className="h-3 w-3 shrink-0 rounded-full"
-            style={{ backgroundColor: subscription.color }}
-          />
-          <span className="font-medium text-charcoal">{subscription.name}</span>
-          {!subscription.active && (
-            <span className="rounded-button bg-bone px-2 py-0.5 text-xs text-taupe">Pausada</span>
-          )}
+        <div className="flex items-center gap-3">
+          <SubscriptionLogo name={subscription.name} fallbackColor={subscription.color} size={36} />
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-charcoal">{subscription.name}</span>
+            {!subscription.active && (
+              <span className="rounded-button bg-bone px-2 py-0.5 text-xs text-taupe">Pausada</span>
+            )}
+          </div>
         </div>
         <div className="flex gap-1">
           <button
