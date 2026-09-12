@@ -40,11 +40,11 @@ export function CategoryFormModal({ category, onClose, onSubmit }: CategoryFormM
       role="dialog"
       aria-modal="true"
       aria-labelledby="category-form-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 px-4"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-charcoal/40 px-4 py-8"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-modal bg-warm-white p-6"
+        className="my-auto w-full max-w-md rounded-modal bg-warm-white p-6 max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">
@@ -107,8 +107,8 @@ export function CategoryFormModal({ category, onClose, onSubmit }: CategoryFormM
 
           <fieldset className="flex flex-col gap-1.5">
             <legend className="text-sm font-medium text-slate">Color</legend>
-            <div className="flex gap-2">
-              {COLOR_OPTIONS.map((option) => (
+            <div className="flex flex-wrap gap-2">
+  {COLOR_OPTIONS.map((option) => (
                 <button
                   key={option}
                   type="button"

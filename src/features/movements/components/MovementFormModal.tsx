@@ -3,6 +3,8 @@ import { X } from 'lucide-react'
 import type { Account } from '../../accounts/types'
 import type { Category } from '../../categories/types'
 import { MOVEMENT_TYPE_LABELS, type Movement, type MovementInput, type MovementType } from '../types'
+import { useSettings } from '../../../lib/settings/useSettings'
+import { formatCurrency } from '../../../lib/format'
 
 interface MovementFormModalProps {
   movement: Movement | null
@@ -21,6 +23,7 @@ export function MovementFormModal({
   onClose,
   onSubmit,
 }: MovementFormModalProps) {
+  const { settings } = useSettings()
   const [type, setType] = useState<MovementType>(movement?.type ?? 'gasto')
   const [accountId, setAccountId] = useState(movement?.account_id ?? accounts[0]?.id ?? '')
   const [transferAccountId, setTransferAccountId] = useState(movement?.transfer_account_id ?? '')
@@ -35,6 +38,12 @@ export function MovementFormModal({
   const needsTransferAccount = type === 'transferencia'
   const availableCategories = categories.filter((c) => c.type === type)
   const availableTransferAccounts = accounts.filter((a) => a.id !== accountId)
+
+  const selectedAccount = accounts.find((a) => a.id === accountId)
+  const creditAvailable =
+    selectedAccount?.type === 'credito' && selectedAccount.credit_limit != null
+      ? selectedAccount.credit_limit + selectedAccount.current_balance
+      : null
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -56,6 +65,10 @@ export function MovementFormModal({
     }
     if (type !== 'ajuste' && parsedAmount < 0) {
       setError('El monto debe ser positivo para este tipo de movimiento.')
+      return
+    }
+    if (type === 'gasto' && creditAvailable !== null && parsedAmount > creditAvailable) {
+      setError(`Este monto excede tu crédito disponible (${formatCurrency(creditAvailable, settings.currency)}).`)
       return
     }
 
@@ -81,11 +94,11 @@ export function MovementFormModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="movement-form-title"
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-charcoal/40 px-4 py-8"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-charcoal/40 px-4 py-8"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-modal bg-warm-white p-6"
+        className="my-auto w-full max-w-md rounded-modal bg-warm-white p-6 max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">
@@ -211,6 +224,11 @@ export function MovementFormModal({
             />
             {type === 'ajuste' && (
               <p className="text-xs text-stone">Usa un número negativo para restar saldo.</p>
+            )}
+            {type === 'gasto' && creditAvailable !== null && (
+              <p className="text-xs text-stone">
+                Disponible: {formatCurrency(creditAvailable, settings.currency)}
+              </p>
             )}
           </div>
 

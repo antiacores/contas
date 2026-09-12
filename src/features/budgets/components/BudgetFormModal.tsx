@@ -50,11 +50,11 @@ export function BudgetFormModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="budget-form-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 px-4"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-charcoal/40 px-4 py-8"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-modal bg-warm-white p-6"
+        className="my-auto w-full max-w-md rounded-modal bg-warm-white p-6 max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">

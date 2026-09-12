@@ -3,9 +3,8 @@ import {
   Wallet,
   Tag,
   ArrowRightLeft,
+  Gauge,
   PiggyBank,
-  Target,
-  Settings,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -22,7 +21,6 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/cuentas', label: 'Cuentas', icon: Wallet },
   { to: '/categorias', label: 'Categorías', icon: Tag },
   { to: '/movimientos', label: 'Movimientos', icon: ArrowRightLeft },
-  { to: '/presupuestos', label: 'Presupuestos', icon: PiggyBank },
-  { to: '/ahorros', label: 'Ahorros', icon: Target, matchPrefix: true },
-  { to: '/configuracion', label: 'Configuración', icon: Settings },
+  { to: '/presupuestos', label: 'Presupuestos', icon: Gauge },
+  { to: '/ahorros', label: 'Ahorros', icon: PiggyBank, matchPrefix: true },
 ]
