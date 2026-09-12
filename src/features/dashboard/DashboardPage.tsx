@@ -1,11 +1,17 @@
+import { useState } from 'react'
 import { Wallet, TrendingUp, Scale } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import { DashboardHeader } from './components/DashboardHeader'
 import { SummaryCard } from './components/SummaryCard'
 import { RecentMovementsCard } from './components/RecentMovementsCard'
 import { useAccounts } from '../accounts/useAccounts'
 import { useMovements } from '../movements/useMovements'
 import { DEFAULT_FILTERS } from '../movements/types'
+import { useStatistics } from '../statistics/useStatistics'
+import { CategoryBreakdownChart } from '../statistics/components/CategoryBreakdownChart'
+import { MonthlyTrendChart } from '../statistics/components/MonthlyTrendChart'
+import { NetWorthTrendChart } from '../statistics/components/NetWorthTrendChart'
+import { PeriodSelector } from '../budgets/components/PeriodSelector'
+import { currentPeriod, type BudgetPeriod } from '../budgets/types'
 
 function startOfMonth(): string {
   const now = new Date()
@@ -19,6 +25,10 @@ export function DashboardPage() {
     ...DEFAULT_FILTERS,
     dateFrom: startOfMonth(),
   })
+
+  const [categoryPeriod, setCategoryPeriod] = useState<BudgetPeriod>(currentPeriod())
+  const { categoryBreakdown, monthlyTotals, netWorthHistory, loading: statsLoading } =
+    useStatistics(categoryPeriod)
 
   // Saldo: dinero líquido disponible (excluye tarjetas de crédito, que son deuda).
   // Patrimonio: suma de TODAS las cuentas — si una cuenta de crédito tiene saldo
@@ -41,10 +51,10 @@ export function DashboardPage() {
         }, 0)
 
   return (
-    <div className="min-h-screen bg-warm-white">
+    <div>
       <DashboardHeader />
 
-      <main className="mx-auto flex max-w-4xl flex-col gap-4 px-6 pb-12 sm:px-10">
+      <div className="flex flex-col gap-4 px-4 pb-12 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <SummaryCard
             label="Saldo"
@@ -66,29 +76,46 @@ export function DashboardPage() {
           />
         </div>
 
-        <div className="flex flex-wrap gap-4 text-sm">
-          <Link to="/cuentas" className="font-medium text-charcoal underline hover:text-slate">
-            Administrar cuentas →
-          </Link>
-          <Link to="/categorias" className="font-medium text-charcoal underline hover:text-slate">
-            Categorías →
-          </Link>
-          <Link to="/presupuestos" className="font-medium text-charcoal underline hover:text-slate">
-            Presupuestos →
-          </Link>
-          <Link to="/metas" className="font-medium text-charcoal underline hover:text-slate">
-            Metas →
-          </Link>
-          <Link to="/estadisticas" className="font-medium text-charcoal underline hover:text-slate">
-            Estadísticas →
-          </Link>
-          <Link to="/configuracion" className="font-medium text-charcoal underline hover:text-slate">
-            Configuración →
-          </Link>
-        </div>
+        {/* En pantallas grandes, gráficas y últimos movimientos van lado a lado;
+            en móvil se apilan (mobile-first, como pide el DESIGN_SYSTEM). */}
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="flex flex-col gap-4 lg:col-span-2">
+            <section className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-medium text-taupe">Gastos por categoría</h2>
+              </div>
+              <PeriodSelector period={categoryPeriod} onChange={setCategoryPeriod} />
+              {statsLoading ? (
+                <p className="py-16 text-center text-sm text-stone">Cargando…</p>
+              ) : (
+                <CategoryBreakdownChart data={categoryBreakdown} />
+              )}
+            </section>
 
-        <RecentMovementsCard movements={recentMovements} loading={recentLoading} />
-      </main>
+            <section className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-6">
+              <h2 className="text-sm font-medium text-taupe">Ingresos vs. gastos (últimos 6 meses)</h2>
+              {statsLoading ? (
+                <p className="py-16 text-center text-sm text-stone">Cargando…</p>
+              ) : (
+                <MonthlyTrendChart data={monthlyTotals} />
+              )}
+            </section>
+
+            <section className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-6">
+              <h2 className="text-sm font-medium text-taupe">Tendencia de patrimonio (últimos 6 meses)</h2>
+              {statsLoading ? (
+                <p className="py-16 text-center text-sm text-stone">Cargando…</p>
+              ) : (
+                <NetWorthTrendChart data={netWorthHistory} />
+              )}
+            </section>
+          </div>
+
+          <div className="lg:col-span-1">
+            <RecentMovementsCard movements={recentMovements} loading={recentLoading} />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
