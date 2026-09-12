@@ -27,22 +27,18 @@ export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: Acco
           </button>
         )}
 
-        <span
-          aria-hidden="true"
-          className="h-10 w-10 shrink-0 rounded-full"
-          style={{ backgroundColor: account.color }}
-        />
+        {account.bank ? (
+          <BankBadge bank={account.bank} size={40} />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="h-10 w-10 shrink-0 rounded-full"
+            style={{ backgroundColor: account.color }}
+          />
+        )}
         <div>
           <p className="font-medium text-charcoal">{account.name}</p>
-          <div className="flex items-center gap-1.5 text-sm text-taupe">
-            <span>{ACCOUNT_TYPE_LABELS[account.type]}</span>
-            {account.bank && (
-              <>
-                <span>·</span>
-                <BankBadge bank={account.bank} />
-              </>
-            )}
-          </div>
+          <span className="text-sm text-taupe">{ACCOUNT_TYPE_LABELS[account.type]}</span>
         </div>
       </div>
 
