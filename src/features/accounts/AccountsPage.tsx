@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, Plus } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Plus } from 'lucide-react'
 import {
   DndContext,
   closestCenter,
@@ -15,6 +14,7 @@ import { createAccount, deleteAccount, reorderAccounts, updateAccount } from './
 import { SortableAccountCard } from './components/SortableAccountCard'
 import { AccountFormModal } from './components/AccountFormModal'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { PageHeader } from '../../components/PageHeader'
 import type { Account, AccountInput } from './types'
 
 export function AccountsPage() {
@@ -22,6 +22,8 @@ export function AccountsPage() {
   const [editingAccount, setEditingAccount] = useState<Account | null | undefined>(undefined)
   const [deletingAccount, setDeletingAccount] = useState<Account | null>(null)
 
+  // Requiere un pequeño desplazamiento antes de iniciar el arrastre,
+  // así un simple click en la card no se confunde con un drag.
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
   async function handleSubmit(input: AccountInput) {
@@ -49,38 +51,31 @@ export function AccountsPage() {
     const newIndex = accounts.findIndex((a) => a.id === over.id)
     const reordered = arrayMove(accounts, oldIndex, newIndex)
 
+    // Optimista: actualiza la UI de inmediato, y persiste en segundo plano.
     setAccounts(reordered)
     try {
       await reorderAccounts(reordered.map((a) => a.id))
     } catch {
-      await refresh()
+      await refresh() // si falla, recupera el orden real del servidor
     }
   }
 
   return (
-    <div className="min-h-screen bg-warm-white">
-      <header className="flex items-center justify-between px-6 py-6 sm:px-10">
-        <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            aria-label="Volver al dashboard"
-            className="rounded-button p-2 text-taupe hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
+    <div>
+      <PageHeader
+        title="Cuentas"
+        action={
+          <button
+            onClick={() => setEditingAccount(null)}
+            className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40"
           >
-            <ArrowLeft size={20} />
-          </Link>
-          <h1 className="text-xl font-semibold text-charcoal">Cuentas</h1>
-        </div>
+            <Plus size={16} />
+            Nueva cuenta
+          </button>
+        }
+      />
 
-        <button
-          onClick={() => setEditingAccount(null)}
-          className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40"
-        >
-          <Plus size={16} />
-          Nueva cuenta
-        </button>
-      </header>
-
-      <main className="mx-auto flex max-w-3xl flex-col gap-3 px-6 pb-12 sm:px-10">
+      <div className="mx-auto flex max-w-3xl flex-col gap-3 px-4 pb-12 sm:px-6 lg:px-10">
         {loading && <p className="py-10 text-center text-sm text-stone">Cargando…</p>}
 
         {error && (
@@ -115,7 +110,7 @@ export function AccountsPage() {
             </SortableContext>
           </DndContext>
         )}
-      </main>
+      </div>
 
       {editingAccount !== undefined && (
         <AccountFormModal

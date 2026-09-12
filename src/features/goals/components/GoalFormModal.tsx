@@ -42,7 +42,7 @@ export function GoalFormModal({ goal, onClose, onSubmit }: GoalFormModalProps) {
         color,
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo guardar la meta.')
+      setError(err instanceof Error ? err.message : 'No se pudo guardar el ahorro.')
       setLoading(false)
     }
   }
@@ -61,7 +61,7 @@ export function GoalFormModal({ goal, onClose, onSubmit }: GoalFormModalProps) {
       >
         <div className="mb-6 flex items-center justify-between">
           <h2 id="goal-form-title" className="text-lg font-semibold text-charcoal">
-            {goal ? 'Editar meta' : 'Nueva meta'}
+            {goal ? 'Editar ahorro' : 'Nuevo ahorro'}
           </h2>
           <button
             onClick={onClose}
@@ -146,7 +146,7 @@ export function GoalFormModal({ goal, onClose, onSubmit }: GoalFormModalProps) {
             disabled={loading}
             className="mt-2 rounded-button bg-charcoal px-4 py-3 font-medium text-warm-white transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? 'Guardando…' : goal ? 'Guardar cambios' : 'Crear meta'}
+            {loading ? 'Guardando…' : goal ? 'Guardar cambios' : 'Crear ahorro'}
           </button>
         </form>
       </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, Pencil, Plus, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useGoals } from './useGoals'
 import { useGoalContributions } from './useGoalContributions'
@@ -11,6 +11,7 @@ import { createContribution, deleteContribution } from './api/contributions'
 import { GoalFormModal } from './components/GoalFormModal'
 import { ContributionFormModal } from './components/ContributionFormModal'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { PageHeader } from '../../components/PageHeader'
 import type { GoalContribution, GoalInput } from './types'
 
 const dateFormatter = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -35,7 +36,7 @@ export function GoalDetailPage() {
   if (!goal) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-warm-white">
-        <p className="text-sm text-stone">Cargando meta…</p>
+        <p className="text-sm text-stone">Cargando ahorro…</p>
       </div>
     )
   }
@@ -64,42 +65,35 @@ export function GoalDetailPage() {
 
   async function handleConfirmDeleteGoal() {
     await deleteGoal(goal!.id)
-    navigate('/metas', { replace: true })
+    navigate('/ahorros', { replace: true })
   }
 
   return (
-    <div className="min-h-screen bg-warm-white">
-      <header className="flex items-center justify-between px-6 py-6 sm:px-10">
-        <div className="flex items-center gap-3">
-          <Link
-            to="/metas"
-            aria-label="Volver a metas"
-            className="rounded-button p-2 text-taupe hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
-          >
-            <ArrowLeft size={20} />
-          </Link>
-          <h1 className="text-xl font-semibold text-charcoal">{goal.name}</h1>
-        </div>
+    <div>
+      <PageHeader
+        title={goal.name}
+        backTo="/ahorros"
+        action={
+          <div className="flex gap-1">
+            <button
+              onClick={() => setShowEditGoal(true)}
+              aria-label="Editar ahorro"
+              className="rounded-button p-2 text-taupe hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
+            >
+              <Pencil size={18} />
+            </button>
+            <button
+              onClick={() => setDeletingGoal(true)}
+              aria-label="Eliminar ahorro"
+              className="rounded-button p-2 text-taupe hover:bg-bone hover:text-error focus:outline-none focus:ring-2 focus:ring-slate/40"
+            >
+              <Trash2 size={18} />
+            </button>
+          </div>
+        }
+      />
 
-        <div className="flex gap-1">
-          <button
-            onClick={() => setShowEditGoal(true)}
-            aria-label="Editar meta"
-            className="rounded-button p-2 text-taupe hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
-          >
-            <Pencil size={18} />
-          </button>
-          <button
-            onClick={() => setDeletingGoal(true)}
-            aria-label="Eliminar meta"
-            className="rounded-button p-2 text-taupe hover:bg-bone hover:text-error focus:outline-none focus:ring-2 focus:ring-slate/40"
-          >
-            <Trash2 size={18} />
-          </button>
-        </div>
-      </header>
-
-      <main className="mx-auto flex max-w-3xl flex-col gap-4 px-6 pb-12 sm:px-10">
+      <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 pb-12 sm:px-6 lg:px-10">
         <div className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-6">
           {reached && <p className="text-sm font-medium text-success">¡Meta cumplida! 🎉</p>}
           <div
@@ -190,7 +184,7 @@ export function GoalDetailPage() {
             </div>
           ))}
         </div>
-      </main>
+      </div>
 
       {showEditGoal && (
         <GoalFormModal goal={goal} onClose={() => setShowEditGoal(false)} onSubmit={handleEditGoal} />
@@ -208,7 +202,7 @@ export function GoalDetailPage() {
       {deletingContribution && (
         <ConfirmDialog
           title="Eliminar aportación"
-          message="¿Seguro que quieres eliminar esta aportación? Esto reducirá el saldo actual de la meta."
+          message="¿Seguro que quieres eliminar esta aportación? Esto reducirá el saldo actual del ahorro."
           onConfirm={handleConfirmDeleteContribution}
           onCancel={() => setDeletingContribution(null)}
         />
@@ -216,7 +210,7 @@ export function GoalDetailPage() {
 
       {deletingGoal && (
         <ConfirmDialog
-          title="Eliminar meta"
+          title="Eliminar ahorro"
           message={`¿Seguro que quieres eliminar "${goal.name}"? Se borrará también todo su historial de aportaciones.`}
           onConfirm={handleConfirmDeleteGoal}
           onCancel={() => setDeletingGoal(false)}

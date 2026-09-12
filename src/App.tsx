@@ -2,17 +2,19 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './lib/auth/AuthProvider'
 import { SettingsProvider } from './lib/settings/SettingsProvider'
-import { ProtectedRoute } from './routes/ProtectedRoute'
+import { ProtectedLayout } from './routes/ProtectedLayout'
 import { LoginPage } from './features/auth/LoginPage'
 import { RegisterPage } from './features/auth/RegisterPage'
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage'
 import { UpdatePasswordPage } from './features/auth/UpdatePasswordPage'
-import { DashboardPage } from './features/dashboard/DashboardPage'
 
 // Code-splitting: cada una de estas pantallas se descarga solo cuando el
-// usuario navega a su ruta, no de entrada al abrir la app. Esto le pega
-// especialmente bien a Estadísticas (recharts) y Cuentas (dnd-kit), que son
-// las dependencias más pesadas del proyecto.
+// usuario navega a su ruta, no de entrada al abrir la app. Dashboard va aquí
+// también porque ahora incluye las gráficas de recharts — así login/registro
+// (lo primero que ve cualquiera sin sesión) se mantienen ligeros.
+const DashboardPage = lazy(() =>
+  import('./features/dashboard/DashboardPage').then((m) => ({ default: m.DashboardPage })),
+)
 const AccountsPage = lazy(() =>
   import('./features/accounts/AccountsPage').then((m) => ({ default: m.AccountsPage })),
 )
@@ -30,9 +32,6 @@ const GoalsPage = lazy(() =>
 )
 const GoalDetailPage = lazy(() =>
   import('./features/goals/GoalDetailPage').then((m) => ({ default: m.GoalDetailPage })),
-)
-const StatisticsPage = lazy(() =>
-  import('./features/statistics/StatisticsPage').then((m) => ({ default: m.StatisticsPage })),
 )
 const SettingsPage = lazy(() =>
   import('./features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })),
@@ -57,78 +56,19 @@ function App() {
               <Route path="/registro" element={<RegisterPage />} />
               <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
               <Route path="/actualizar-contrasena" element={<UpdatePasswordPage />} />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/cuentas"
-                element={
-                  <ProtectedRoute>
-                    <AccountsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/categorias"
-                element={
-                  <ProtectedRoute>
-                    <CategoriesPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/movimientos"
-                element={
-                  <ProtectedRoute>
-                    <MovementsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/presupuestos"
-                element={
-                  <ProtectedRoute>
-                    <BudgetsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/metas"
-                element={
-                  <ProtectedRoute>
-                    <GoalsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/metas/:goalId"
-                element={
-                  <ProtectedRoute>
-                    <GoalDetailPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/estadisticas"
-                element={
-                  <ProtectedRoute>
-                    <StatisticsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/configuracion"
-                element={
-                  <ProtectedRoute>
-                    <SettingsPage />
-                  </ProtectedRoute>
-                }
-              />
+
+              {/* Todas las rutas de aquí abajo comparten el menú lateral y el
+                  chequeo de sesión, gracias a ProtectedLayout + <Outlet />. */}
+              <Route element={<ProtectedLayout />}>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/cuentas" element={<AccountsPage />} />
+                <Route path="/categorias" element={<CategoriesPage />} />
+                <Route path="/movimientos" element={<MovementsPage />} />
+                <Route path="/presupuestos" element={<BudgetsPage />} />
+                <Route path="/ahorros" element={<GoalsPage />} />
+                <Route path="/ahorros/:goalId" element={<GoalDetailPage />} />
+                <Route path="/configuracion" element={<SettingsPage />} />
+              </Route>
             </Routes>
           </Suspense>
         </SettingsProvider>
