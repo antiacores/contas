@@ -1,5 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react'
 import type { BudgetWithProgress } from '../types'
+import { useSettings } from '../../../lib/settings/useSettings'
+import { formatCurrency } from '../../../lib/format'
 
 interface BudgetProgressCardProps {
   budget: BudgetWithProgress
@@ -8,13 +10,8 @@ interface BudgetProgressCardProps {
   onDelete: () => void
 }
 
-const formatter = new Intl.NumberFormat('es-MX', {
-  style: 'currency',
-  currency: 'MXN',
-  maximumFractionDigits: 2,
-})
-
 export function BudgetProgressCard({ budget, isAnnual, onEdit, onDelete }: BudgetProgressCardProps) {
+  const { settings } = useSettings()
   const percent = Math.min((budget.spent / budget.target) * 100, 100)
   const isOver = budget.spent > budget.target
   const isNearLimit = !isOver && percent >= 80
@@ -69,14 +66,16 @@ export function BudgetProgressCard({ budget, isAnnual, onEdit, onDelete }: Budge
 
       <div className="flex items-center justify-between text-sm">
         <span className={textColor}>
-          {formatter.format(budget.spent)} de {formatter.format(budget.target)}
+          {formatCurrency(budget.spent, settings.currency)} de {formatCurrency(budget.target, settings.currency)}
         </span>
         {isOver && <span className="font-medium text-error">Excedido</span>}
         {isNearLimit && <span className="font-medium text-warning">Cerca del límite</span>}
       </div>
 
       {isAnnual && (
-        <p className="text-xs text-stone">Presupuesto mensual: {formatter.format(budget.amount)}</p>
+        <p className="text-xs text-stone">
+          Presupuesto mensual: {formatCurrency(budget.amount, settings.currency)}
+        </p>
       )}
     </div>
   )

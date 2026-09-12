@@ -1,17 +1,13 @@
 import { Link } from 'react-router-dom'
 import { EmptyState } from './EmptyState'
 import type { Movement } from '../../movements/types'
+import { useSettings } from '../../../lib/settings/useSettings'
+import { formatCurrency } from '../../../lib/format'
 
 interface RecentMovementsCardProps {
   movements: Movement[]
   loading: boolean
 }
-
-const formatter = new Intl.NumberFormat('es-MX', {
-  style: 'currency',
-  currency: 'MXN',
-  maximumFractionDigits: 2,
-})
 
 const dateFormatter = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'short' })
 
@@ -22,6 +18,7 @@ function signedAmount(movement: Movement): number {
 }
 
 export function RecentMovementsCard({ movements, loading }: RecentMovementsCardProps) {
+  const { settings } = useSettings()
   return (
     <div className="flex flex-col rounded-card border border-bone bg-ivory p-6">
       <div className="flex items-center justify-between">
@@ -51,7 +48,7 @@ export function RecentMovementsCard({ movements, loading }: RecentMovementsCardP
                   </span>
                 </div>
                 <span className={amount < 0 ? 'font-medium text-error' : 'font-medium text-success'}>
-                  {formatter.format(amount)}
+                  {formatCurrency(amount, settings.currency)}
                 </span>
               </li>
             )

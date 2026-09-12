@@ -4,6 +4,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useGoals } from './useGoals'
 import { useGoalContributions } from './useGoalContributions'
 import { useAccounts } from '../accounts/useAccounts'
+import { useSettings } from '../../lib/settings/useSettings'
+import { formatCurrency } from '../../lib/format'
 import { updateGoal, deleteGoal } from './api/goals'
 import { createContribution, deleteContribution } from './api/contributions'
 import { GoalFormModal } from './components/GoalFormModal'
@@ -11,15 +13,10 @@ import { ContributionFormModal } from './components/ContributionFormModal'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import type { GoalContribution, GoalInput } from './types'
 
-const formatter = new Intl.NumberFormat('es-MX', {
-  style: 'currency',
-  currency: 'MXN',
-  maximumFractionDigits: 2,
-})
-
 const dateFormatter = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
 
 export function GoalDetailPage() {
+  const { settings } = useSettings()
   const { goalId } = useParams<{ goalId: string }>()
   const navigate = useNavigate()
   const { goals, refresh: refreshGoals } = useGoals()
@@ -119,9 +116,9 @@ export function GoalDetailPage() {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-lg font-semibold text-charcoal">
-              {formatter.format(goal.current_amount)}
+              {formatCurrency(goal.current_amount, settings.currency)}
             </span>
-            <span className="text-sm text-stone">de {formatter.format(goal.target_amount)}</span>
+            <span className="text-sm text-stone">de {formatCurrency(goal.target_amount, settings.currency)}</span>
           </div>
           {goal.target_date && (
             <p className="text-sm text-stone">
@@ -180,7 +177,7 @@ export function GoalDetailPage() {
                 <span
                   className={`font-medium ${contribution.amount < 0 ? 'text-error' : 'text-success'}`}
                 >
-                  {formatter.format(contribution.amount)}
+                  {formatCurrency(contribution.amount, settings.currency)}
                 </span>
                 <button
                   onClick={() => setDeletingContribution(contribution)}

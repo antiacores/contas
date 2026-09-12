@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 import { EmptyState } from './EmptyState'
+import { useSettings } from '../../../lib/settings/useSettings'
+import { formatCurrency } from '../../../lib/format'
 
 interface SummaryCardProps {
   label: string
@@ -9,16 +11,11 @@ interface SummaryCardProps {
   icon?: ReactNode
 }
 
-const formatter = new Intl.NumberFormat('es-MX', {
-  style: 'currency',
-  currency: 'MXN',
-  maximumFractionDigits: 2,
-})
-
 // Card de resumen usada para Saldo, Patrimonio y Balance mensual.
 // value=null representa "todavía no hay datos", no "el saldo es cero" —
 // son dos cosas distintas y no deben confundirse en la UI.
 export function SummaryCard({ label, value, emptyMessage, icon }: SummaryCardProps) {
+  const { settings } = useSettings()
   return (
     <div className="flex flex-col justify-between rounded-card border border-bone bg-ivory p-6">
       <div className="flex items-center justify-between">
@@ -29,7 +26,9 @@ export function SummaryCard({ label, value, emptyMessage, icon }: SummaryCardPro
       {value === null ? (
         <EmptyState message={emptyMessage} />
       ) : (
-        <span className="mt-4 text-2xl font-semibold text-charcoal">{formatter.format(value)}</span>
+        <span className="mt-4 text-2xl font-semibold text-charcoal">
+          {formatCurrency(value, settings.currency)}
+        </span>
       )}
     </div>
   )

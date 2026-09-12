@@ -1,15 +1,11 @@
 import { Link } from 'react-router-dom'
 import type { Goal } from '../types'
+import { useSettings } from '../../../lib/settings/useSettings'
+import { formatCurrency } from '../../../lib/format'
 
 interface GoalCardProps {
   goal: Goal
 }
-
-const formatter = new Intl.NumberFormat('es-MX', {
-  style: 'currency',
-  currency: 'MXN',
-  maximumFractionDigits: 2,
-})
 
 const dateFormatter = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })
 
@@ -21,6 +17,7 @@ function daysRemaining(targetDate: string): number {
 }
 
 export function GoalCard({ goal }: GoalCardProps) {
+  const { settings } = useSettings()
   const percent = Math.min((goal.current_amount / goal.target_amount) * 100, 100)
   const reached = goal.current_amount >= goal.target_amount
   const days = goal.target_date ? daysRemaining(goal.target_date) : null
@@ -55,7 +52,8 @@ export function GoalCard({ goal }: GoalCardProps) {
 
       <div className="flex items-center justify-between text-sm">
         <span className="text-charcoal">
-          {formatter.format(goal.current_amount)} de {formatter.format(goal.target_amount)}
+          {formatCurrency(goal.current_amount, settings.currency)} de{' '}
+          {formatCurrency(goal.target_amount, settings.currency)}
         </span>
         {goal.target_date && days !== null && (
           <span className={days < 0 ? 'text-error' : 'text-stone'}>

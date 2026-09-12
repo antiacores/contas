@@ -1,17 +1,13 @@
 import { ArrowRightLeft, Pencil, Trash2 } from 'lucide-react'
 import type { Movement } from '../types'
+import { useSettings } from '../../../lib/settings/useSettings'
+import { formatCurrency } from '../../../lib/format'
 
 interface MovementRowProps {
   movement: Movement
   onEdit: () => void
   onDelete: () => void
 }
-
-const formatter = new Intl.NumberFormat('es-MX', {
-  style: 'currency',
-  currency: 'MXN',
-  maximumFractionDigits: 2,
-})
 
 const dateFormatter = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'short' })
 
@@ -23,6 +19,7 @@ function signedAmount(movement: Movement): number {
 }
 
 export function MovementRow({ movement, onEdit, onDelete }: MovementRowProps) {
+  const { settings } = useSettings()
   const amount = signedAmount(movement)
   const title =
     movement.description ||
@@ -55,7 +52,7 @@ export function MovementRow({ movement, onEdit, onDelete }: MovementRowProps) {
 
       <div className="flex items-center gap-3">
         <span className={`font-medium ${amount < 0 ? 'text-error' : 'text-success'}`}>
-          {formatter.format(amount)}
+          {formatCurrency(amount, settings.currency)}
         </span>
         <div className="flex gap-1">
           <button
