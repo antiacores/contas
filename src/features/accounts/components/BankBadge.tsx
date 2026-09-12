@@ -6,9 +6,12 @@ interface BankBadgeProps {
   size?: number // en px — default 24 (uso inline junto al tipo de cuenta)
 }
 
-// Muestra el logo real del banco (vía Clearbit, por dominio). Si la imagen
-// falla al cargar (dominio no encontrado, servicio caído, banco "Otro"
-// con texto libre, etc.), cae de vuelta al badge de iniciales con color.
+const LOGO_DEV_TOKEN = import.meta.env.VITE_LOGO_DEV_TOKEN
+
+// Muestra el logo real del banco (vía logo.dev, por dominio — sucesor oficial
+// de Clearbit, que cerró su API de logos en diciembre 2025). Si la imagen
+// falla al cargar (dominio no encontrado, banco "Otro" con texto libre,
+// falta la clave de logo.dev, etc.), cae de vuelta al badge de iniciales.
 export function BankBadge({ bank, size = 24 }: BankBadgeProps) {
   const [imageFailed, setImageFailed] = useState(false)
 
@@ -18,7 +21,10 @@ export function BankBadge({ bank, size = 24 }: BankBadgeProps) {
   const initials = known ? known.initials : bank.slice(0, 2).toUpperCase()
   const color = known ? known.color : '#A89D8D'
   const label = known ? known.name : bank
-  const logoUrl = known?.domain ? `https://logo.clearbit.com/${known.domain}` : null
+  const logoUrl =
+    known?.domain && LOGO_DEV_TOKEN
+      ? `https://img.logo.dev/${known.domain}?token=${LOGO_DEV_TOKEN}`
+      : null
   const style = { width: size, height: size }
 
   if (logoUrl && !imageFailed) {
@@ -26,14 +32,14 @@ export function BankBadge({ bank, size = 24 }: BankBadgeProps) {
       <span
         title={label}
         style={style}
-        className="flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-warm-white ring-1 ring-bone"
+        className="flex shrink-0 items-center justify-center overflow-hidden rounded-lg bg-warm-white ring-1 ring-bone"
       >
         <img
-          src={logoUrl}
-          alt={label}
-          className="h-full w-full object-contain p-0.5"
-          onError={() => setImageFailed(true)}
-        />
+  src={logoUrl}
+  alt={label}
+  className="h-full w-full object-cover"
+  onError={() => setImageFailed(true)}
+/>
       </span>
     )
   }
@@ -43,10 +49,10 @@ export function BankBadge({ bank, size = 24 }: BankBadgeProps) {
       title={label}
       aria-label={label}
       style={style}
-      className="flex shrink-0 items-center justify-center rounded-full font-semibold text-warm-white"
+      className="flex shrink-0 items-center justify-center rounded-lg font-semibold text-warm-white"
     >
       <span
-        style={{ backgroundColor: color, width: '100%', height: '100%', borderRadius: '9999px' }}
+        style={{ backgroundColor: color, width: '100%', height: '100%', borderRadius: '0.5rem' }}
         className="flex items-center justify-center text-[10px]"
       >
         {initials}
