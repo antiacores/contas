@@ -28,6 +28,7 @@ export const SUBSCRIPTION_SERVICES: SubscriptionService[] = [
   { name: 'Xbox Game Pass', domain: 'xbox.com', color: '#107C10' },
   { name: 'Anytime Fitness', domain: 'anytimefitness.com', color: '#D2262C' },
   { name: 'Smart Fit', domain: 'smartfit.com.mx', color: '#CFFF04' },
+  { name: 'Claude', domain: 'claude.ai', color: '#D97757' },
 ]
 
 export function findServiceByName(name: string): SubscriptionService | undefined {
