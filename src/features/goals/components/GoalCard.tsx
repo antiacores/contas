@@ -24,7 +24,7 @@ export function GoalCard({ goal }: GoalCardProps) {
 
   return (
     <Link
-      to={`/metas/${goal.id}`}
+      to={`/ahorros/${goal.id}`}
       className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-5 hover:bg-bone/40 focus:outline-none focus:ring-2 focus:ring-slate/40"
     >
       <div className="flex items-center gap-2">
