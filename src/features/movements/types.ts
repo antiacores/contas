@@ -6,6 +6,7 @@ export interface Movement {
   account_id: string
   transfer_account_id: string | null
   category_id: string | null
+  subscription_id: string | null // se llena solo al "marcar como pagado" una suscripción
   type: MovementType
   description: string | null
   amount: number
@@ -15,6 +16,7 @@ export interface Movement {
   transfer_account_name?: string | null
   category_name?: string | null
   category_color?: string | null
+  subscription_name?: string | null
 }
 
 export type MovementInput = Pick<Movement, 'account_id' | 'transfer_account_id' | 'category_id' | 'type' | 'description' | 'amount' | 'date'>
