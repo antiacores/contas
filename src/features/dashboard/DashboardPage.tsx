@@ -66,21 +66,24 @@ export function DashboardPage() {
           />
         </div>
 
-        <div className="flex gap-4 text-sm">
+        <div className="flex flex-wrap gap-4 text-sm">
           <Link to="/cuentas" className="font-medium text-charcoal underline hover:text-slate">
             Administrar cuentas →
           </Link>
           <Link to="/categorias" className="font-medium text-charcoal underline hover:text-slate">
             Categorías →
           </Link>
-                    <Link to="/presupuestos" className="font-medium text-charcoal underline hover:text-slate">
+          <Link to="/presupuestos" className="font-medium text-charcoal underline hover:text-slate">
             Presupuestos →
           </Link>
-                    <Link to="/metas" className="font-medium text-charcoal underline hover:text-slate">
+          <Link to="/metas" className="font-medium text-charcoal underline hover:text-slate">
             Metas →
           </Link>
-                    <Link to="/estadisticas" className="font-medium text-charcoal underline hover:text-slate">
+          <Link to="/estadisticas" className="font-medium text-charcoal underline hover:text-slate">
             Estadísticas →
+          </Link>
+          <Link to="/configuracion" className="font-medium text-charcoal underline hover:text-slate">
+            Configuración →
           </Link>
         </div>
 
