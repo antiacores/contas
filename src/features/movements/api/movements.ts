@@ -6,7 +6,8 @@ const SELECT_WITH_JOINS = `
   account:accounts!movements_account_id_fkey(name),
   transfer_account:accounts!movements_transfer_account_id_fkey(name),
   category:categories(name, color),
-  subscription:subscriptions(name)
+  subscription:subscriptions(name),
+  debt:debts(name)
 `
 
 // Supabase devuelve los joins anidados; esta función los "aplana"
@@ -19,6 +20,7 @@ function mapRow(row: any): Movement {
     category_name: row.category?.name ?? null,
     category_color: row.category?.color ?? null,
     subscription_name: row.subscription?.name ?? null,
+    debt_name: row.debt?.name ?? null,
   }
 }
 
