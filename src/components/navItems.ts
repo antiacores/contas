@@ -6,6 +6,7 @@ import {
   Gauge,
   PiggyBank,
   Repeat,
+  HandCoins,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -25,4 +26,5 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/presupuestos', label: 'Presupuestos', icon: Gauge },
   { to: '/ahorros', label: 'Ahorros', icon: PiggyBank, matchPrefix: true },
   { to: '/suscripciones', label: 'Suscripciones', icon: Repeat },
+  { to: '/deudas', label: 'Deudas', icon: HandCoins },
 ]
