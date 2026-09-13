@@ -36,6 +36,9 @@ const GoalDetailPage = lazy(() =>
 const SubscriptionsPage = lazy(() =>
   import('./features/subscriptions/SubscriptionsPage').then((m) => ({ default: m.SubscriptionsPage })),
 )
+const DebtsPage = lazy(() =>
+  import('./features/debts/DebtsPage').then((m) => ({ default: m.DebtsPage })),
+)
 const SettingsPage = lazy(() =>
   import('./features/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })),
 )
@@ -71,6 +74,7 @@ function App() {
                 <Route path="/ahorros" element={<GoalsPage />} />
                 <Route path="/ahorros/:goalId" element={<GoalDetailPage />} />
                 <Route path="/suscripciones" element={<SubscriptionsPage />} />
+                <Route path="/deudas" element={<DebtsPage />} />
                 <Route path="/configuracion" element={<SettingsPage />} />
               </Route>
             </Routes>

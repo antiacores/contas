@@ -1,4 +1,4 @@
-import { ArrowRightLeft, Pencil, Repeat, Trash2 } from 'lucide-react'
+import { ArrowRightLeft, HandCoins, Pencil, Repeat, Trash2 } from 'lucide-react'
 import type { Movement } from '../types'
 import { useSettings } from '../../../lib/settings/useSettings'
 import { formatCurrency } from '../../../lib/format'
@@ -50,6 +50,12 @@ export function MovementRow({ movement, onEdit, onDelete }: MovementRowProps) {
               <span className="ml-1 flex items-center gap-0.5 text-stone">
                 <Repeat size={11} />
                 {movement.subscription_name}
+              </span>
+            )}
+            {movement.debt_name && (
+              <span className="ml-1 flex items-center gap-0.5 text-stone">
+                <HandCoins size={11} />
+                {movement.debt_name}
               </span>
             )}
           </p>
