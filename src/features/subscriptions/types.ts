@@ -5,6 +5,7 @@ export interface Subscription {
   user_id: string
   name: string
   amount: number
+  currency: string // moneda en la que el servicio realmente cobra (ej. USD para Claude)
   frequency: SubscriptionFrequency
   next_payment_date: string
   account_id: string
@@ -20,7 +21,7 @@ export interface Subscription {
 
 export type SubscriptionInput = Pick<
   Subscription,
-  'name' | 'amount' | 'frequency' | 'next_payment_date' | 'account_id' | 'category_id' | 'color' | 'active'
+  'name' | 'amount' | 'currency' | 'frequency' | 'next_payment_date' | 'account_id' | 'category_id' | 'color' | 'active'
 >
 
 export const FREQUENCY_LABELS: Record<SubscriptionFrequency, string> = {

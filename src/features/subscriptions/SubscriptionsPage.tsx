@@ -11,6 +11,7 @@ import {
 } from './api/subscriptions'
 import { useAccounts } from '../accounts/useAccounts'
 import { useCategories } from '../categories/useCategories'
+import { useSettings } from '../../lib/settings/useSettings'
 import { SubscriptionCard } from './components/SubscriptionCard'
 import { SubscriptionFormModal } from './components/SubscriptionFormModal'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
@@ -21,8 +22,10 @@ export function SubscriptionsPage() {
   const { subscriptions, loading, error, refresh } = useSubscriptions()
   const { accounts } = useAccounts()
   const { categories } = useCategories()
+  const { settings } = useSettings()
   const [editingSubscription, setEditingSubscription] = useState<Subscription | null | undefined>(undefined)
   const [deletingSubscription, setDeletingSubscription] = useState<Subscription | null>(null)
+  const [paymentError, setPaymentError] = useState<string | null>(null)
 
   const noAccounts = accounts.length === 0
   const active = subscriptions.filter((s) => s.active)
@@ -39,8 +42,15 @@ export function SubscriptionsPage() {
   }
 
   async function handleMarkPaid(subscription: Subscription) {
-    await markSubscriptionAsPaid(subscription)
-    await refresh()
+    setPaymentError(null)
+    try {
+      await markSubscriptionAsPaid(subscription, settings.currency)
+      await refresh()
+    } catch (err) {
+      setPaymentError(
+        err instanceof Error ? err.message : 'No se pudo registrar el pago. Intenta de nuevo.',
+      )
+    }
   }
 
   async function handleToggleActive(subscription: Subscription) {
@@ -86,6 +96,12 @@ export function SubscriptionsPage() {
         {error && (
           <p role="alert" className="text-center text-sm text-error">
             {error}
+          </p>
+        )}
+
+        {paymentError && (
+          <p role="alert" className="text-center text-sm text-error">
+            {paymentError}
           </p>
         )}
 
