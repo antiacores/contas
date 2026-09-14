@@ -9,6 +9,10 @@ function isActive(pathname: string, to: string, matchPrefix?: boolean): boolean 
   return matchPrefix ? pathname.startsWith(to) : pathname === to
 }
 
+function Logo() {
+  return <img src="/apple-touch-icon.png" alt="" className="h-7 w-7 shrink-0 rounded-md" />
+}
+
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const { pathname } = useLocation()
 
@@ -82,7 +86,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen bg-warm-white">
       {/* Sidebar fija — solo desde md hacia arriba (tablet/laptop) */}
       <aside className="hidden md:sticky md:top-0 md:flex md:h-screen md:w-60 md:shrink-0 md:flex-col md:overflow-y-auto md:border-r md:border-bone md:bg-ivory">
-        <div className="px-6 py-6">
+        <div className="flex items-center gap-2 px-6 py-6">
+          <Logo />
           <span className="text-lg font-semibold text-charcoal">Contas</span>
         </div>
         <NavLinks />
@@ -101,7 +106,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
           >
             <Menu size={22} />
           </button>
-          <span className="font-semibold text-charcoal">Contas</span>
+          <div className="flex items-center gap-2">
+            <Logo />
+            <span className="font-semibold text-charcoal">Contas</span>
+          </div>
           <span className="w-9" aria-hidden="true" /> {/* espaciador para centrar el título */}
         </header>
 
@@ -113,13 +121,16 @@ export function AppLayout({ children }: { children: ReactNode }) {
             aria-modal="true"
             onClick={() => setDrawerOpen(false)}
           >
-            <div className="absolute inset-0 bg-charcoal/40" />
+            <div className="absolute inset-0 animate-fade-in bg-charcoal/40" />
             <div
-              className="absolute left-0 top-0 flex h-screen w-64 flex-col overflow-y-auto bg-ivory pt-6"
+              className="absolute left-0 top-0 flex h-screen w-64 animate-slide-in-left flex-col overflow-y-auto bg-ivory pt-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-4 flex items-center justify-between px-6">
-                <span className="text-lg font-semibold text-charcoal">Contas</span>
+                <div className="flex items-center gap-2">
+                  <Logo />
+                  <span className="text-lg font-semibold text-charcoal">Contas</span>
+                </div>
                 <button
                   onClick={() => setDrawerOpen(false)}
                   aria-label="Cerrar menú"
