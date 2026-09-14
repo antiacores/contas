@@ -38,7 +38,7 @@ export function PeriodSelector({ period, onChange }: PeriodSelectorProps) {
   const nextDisabled = isCurrentOrFuture(period)
 
   return (
-    <div className="flex items-center justify-between gap-2">
+    <div className="flex flex-col items-center gap-2">
       <div className="flex items-center gap-1">
         <button
           onClick={goPrev}

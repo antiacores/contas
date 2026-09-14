@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { EmptyState } from './EmptyState'
 import type { Movement } from '../../movements/types'
 import { useSettings } from '../../../lib/settings/useSettings'
@@ -30,9 +29,6 @@ export function RecentMovementsCard({ movements, loading, compact = false }: Rec
     >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-taupe">Últimos movimientos</h2>
-        <Link to="/movimientos" className="text-xs font-medium text-charcoal underline">
-          Ver todos
-        </Link>
       </div>
 
       {loading ? (
