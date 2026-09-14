@@ -10,7 +10,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, backTo, action }: PageHeaderProps) {
   return (
-    <header className="flex items-center justify-between px-4 py-6 sm:px-6 lg:px-10">
+    <header className="flex flex-col gap-3 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6 lg:px-10">
       <div className="flex items-center gap-3">
         {backTo && (
           <Link

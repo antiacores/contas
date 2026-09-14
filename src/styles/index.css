@@ -51,3 +51,29 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Edge nuevo */
 }
+
+/* Animaciones — muy rápidas y discretas, como pide el DESIGN_SYSTEM.
+   Se disparan solas al montar el elemento (no necesitan JS ni una
+   librería de animación aparte). */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.15s ease-out;
+}
+.animate-scale-in {
+  animation: scale-in 0.15s ease-out;
+}
+.animate-slide-in-left {
+  animation: slide-in-left 0.2s ease-out;
+}

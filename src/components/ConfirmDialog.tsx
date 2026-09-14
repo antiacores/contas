@@ -18,11 +18,11 @@ export function ConfirmDialog({
       role="alertdialog"
       aria-modal="true"
       aria-labelledby="confirm-dialog-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 px-4"
+      className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-charcoal/40 px-4"
       onClick={onCancel}
     >
       <div
-        className="w-full max-w-sm rounded-modal bg-warm-white p-6"
+        className="w-full max-w-sm animate-scale-in rounded-modal bg-warm-white p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="confirm-dialog-title" className="text-lg font-semibold text-charcoal">

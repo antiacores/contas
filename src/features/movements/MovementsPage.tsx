@@ -10,10 +10,23 @@ import { MovementFormModal } from './components/MovementFormModal'
 import { MovementFiltersBar } from './components/MovementFiltersBar'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { PageHeader } from '../../components/PageHeader'
-import type { Movement, MovementInput } from './types'
+import { DEFAULT_FILTERS, type Movement, type MovementInput } from './types'
+
+function startOfMonth(): string {
+  const now = new Date()
+  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+}
+
+function today(): string {
+  return new Date().toISOString().slice(0, 10)
+}
+
+// Por default, del inicio del mes a hoy — así el filtro nunca se ve
+// "en blanco" y ya arranca mostrando lo más relevante (este mes).
+const INITIAL_FILTERS = { ...DEFAULT_FILTERS, dateFrom: startOfMonth(), dateTo: today() }
 
 export function MovementsPage() {
-  const { movements, filters, setFilters, loading, error, refresh } = useMovements()
+  const { movements, filters, setFilters, loading, error, refresh } = useMovements(INITIAL_FILTERS)
   const { accounts } = useAccounts()
   const { categories } = useCategories()
   const [editingMovement, setEditingMovement] = useState<Movement | null | undefined>(undefined)

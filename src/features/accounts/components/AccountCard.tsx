@@ -15,8 +15,8 @@ interface AccountCardProps {
 export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: AccountCardProps) {
   const { settings } = useSettings()
   return (
-    <div className="flex items-center justify-between rounded-card border border-bone bg-ivory p-5">
-      <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 rounded-card border border-bone bg-ivory p-5">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         {dragHandleProps && (
           <button
             {...dragHandleProps}
@@ -36,8 +36,8 @@ export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: Acco
             style={{ backgroundColor: account.color }}
           />
         )}
-        <div>
-          <p className="font-medium text-charcoal">{account.name}</p>
+        <div className="min-w-0">
+          <p className="truncate font-medium text-charcoal">{account.name}</p>
           <span className="text-sm text-taupe">{ACCOUNT_TYPE_LABELS[account.type]}</span>
         </div>
       </div>

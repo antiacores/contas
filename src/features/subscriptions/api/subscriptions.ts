@@ -1,6 +1,8 @@
 import { supabase } from '../../../lib/supabase'
 import type { Subscription, SubscriptionInput } from '../types'
 import { advanceDate } from '../dateUtils'
+import { getExchangeRate } from '../../../lib/exchangeRate'
+import { formatCurrency } from '../../../lib/format'
 
 const SELECT_WITH_JOINS = `*, account:accounts(name), category:categories(name, color)`
 
@@ -63,16 +65,31 @@ export async function toggleSubscriptionActive(subscription: Subscription): Prom
   return mapRow(data)
 }
 
-// Marca la suscripción como pagada: crea el movimiento de gasto vinculado
-// (subscription_id) y avanza next_payment_date según la frecuencia.
-export async function markSubscriptionAsPaid(subscription: Subscription): Promise<Subscription> {
+// Marca la suscripción como pagada: si su moneda es distinta a la moneda
+// principal del usuario, convierte al tipo de cambio del día antes de crear
+// el movimiento — así el saldo de la cuenta nunca queda mal calculado.
+// Crea el movimiento de gasto vinculado (subscription_id) y avanza
+// next_payment_date según la frecuencia.
+export async function markSubscriptionAsPaid(
+  subscription: Subscription,
+  targetCurrency: string,
+): Promise<Subscription> {
+  let amountToCharge = subscription.amount
+  let description = subscription.name
+
+  if (subscription.currency !== targetCurrency) {
+    const rate = await getExchangeRate(subscription.currency, targetCurrency)
+    amountToCharge = Math.round(subscription.amount * rate * 100) / 100
+    description = `${subscription.name} (convertido de ${formatCurrency(subscription.amount, subscription.currency)})`
+  }
+
   const { error: movementError } = await supabase.from('movements').insert({
     account_id: subscription.account_id,
     transfer_account_id: null,
     category_id: subscription.category_id,
     type: 'gasto',
-    description: subscription.name,
-    amount: subscription.amount,
+    description,
+    amount: amountToCharge,
     date: new Date().toISOString().slice(0, 10),
     subscription_id: subscription.id,
   })
