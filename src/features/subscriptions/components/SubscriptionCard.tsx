@@ -1,7 +1,6 @@
 import { CheckCircle2, Pause, Pencil, Play, Trash2 } from 'lucide-react'
 import { FREQUENCY_LABELS, type Subscription } from '../types'
 import { daysUntil } from '../dateUtils'
-import { useSettings } from '../../../lib/settings/useSettings'
 import { formatCurrency } from '../../../lib/format'
 import { SubscriptionLogo } from './SubscriptionLogo'
 
@@ -22,15 +21,14 @@ export function SubscriptionCard({
   onEdit,
   onDelete,
 }: SubscriptionCardProps) {
-  const { settings } = useSettings()
   const days = daysUntil(subscription.next_payment_date)
   const isOverdue = days < 0
   const isSoon = days >= 0 && days <= 3
 
   return (
     <div className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-3">
           <SubscriptionLogo name={subscription.name} fallbackColor={subscription.color} size={36} />
           <div className="flex items-center gap-2">
             <span className="font-medium text-charcoal">{subscription.name}</span>
@@ -66,7 +64,7 @@ export function SubscriptionCard({
 
       <div className="flex items-center justify-between text-sm">
         <span className="text-charcoal">
-          {formatCurrency(subscription.amount, settings.currency)} ·{' '}
+          {formatCurrency(subscription.amount, subscription.currency)} ·{' '}
           {FREQUENCY_LABELS[subscription.frequency]}
         </span>
         <span className="text-stone">
@@ -76,7 +74,7 @@ export function SubscriptionCard({
       </div>
 
       {subscription.active && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <span className={isOverdue ? 'text-sm font-medium text-error' : isSoon ? 'text-sm font-medium text-warning' : 'text-sm text-stone'}>
             {isOverdue
               ? `Venció el ${dateFormatter.format(new Date(`${subscription.next_payment_date}T00:00:00`))}`
