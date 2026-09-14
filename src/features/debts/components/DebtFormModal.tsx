@@ -77,11 +77,11 @@ export function DebtFormModal({ debt, accounts, onClose, onSubmit }: DebtFormMod
       role="dialog"
       aria-modal="true"
       aria-labelledby="debt-form-title"
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-charcoal/40 px-4 py-8"
+      className="fixed inset-0 z-50 flex animate-fade-in items-start justify-center overflow-y-auto bg-charcoal/40 px-4 py-8"
       onClick={onClose}
     >
       <div
-        className="my-auto w-full max-w-md rounded-modal bg-warm-white p-6 max-h-[85vh] overflow-y-auto scrollbar-hide"
+        className="my-auto w-full max-w-md animate-scale-in rounded-modal bg-warm-white p-6 max-h-[85vh] overflow-y-auto scrollbar-hide"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">

@@ -4,6 +4,8 @@ import type { Account } from '../../accounts/types'
 import type { Category } from '../../categories/types'
 import { FREQUENCY_LABELS, type Subscription, type SubscriptionFrequency, type SubscriptionInput } from '../types'
 import { SUBSCRIPTION_SERVICES, findServiceByName } from '../services'
+import { useSettings } from '../../../lib/settings/useSettings'
+import { CURRENCY_LABELS, type Currency } from '../../../lib/settings/types'
 
 interface SubscriptionFormModalProps {
   subscription: Subscription | null
@@ -24,10 +26,12 @@ export function SubscriptionFormModal({
   onClose,
   onSubmit,
 }: SubscriptionFormModalProps) {
+  const { settings } = useSettings()
   const initialService = subscription ? findServiceByName(subscription.name) : undefined
   const [serviceKey, setServiceKey] = useState(initialService ? initialService.name : 'otro')
   const [customName, setCustomName] = useState(initialService ? '' : subscription?.name ?? '')
   const [amount, setAmount] = useState(subscription ? String(subscription.amount) : '')
+  const [currency, setCurrency] = useState<Currency>(subscription?.currency as Currency ?? settings.currency)
   const [frequency, setFrequency] = useState<SubscriptionFrequency>(subscription?.frequency ?? 'mensual')
   const [nextPaymentDate, setNextPaymentDate] = useState(
     subscription?.next_payment_date ?? new Date().toISOString().slice(0, 10),
@@ -64,6 +68,7 @@ export function SubscriptionFormModal({
       await onSubmit({
         name: finalName,
         amount: parsedAmount,
+        currency,
         frequency,
         next_payment_date: nextPaymentDate,
         account_id: accountId,
@@ -82,11 +87,11 @@ export function SubscriptionFormModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="subscription-form-title"
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-charcoal/40 px-4 py-8"
+      className="fixed inset-0 z-50 flex animate-fade-in items-start justify-center overflow-y-auto bg-charcoal/40 px-4 py-8"
       onClick={onClose}
     >
       <div
-        className="my-auto w-full max-w-md rounded-modal bg-warm-white p-6 max-h-[85vh] overflow-y-auto scrollbar-hide"
+        className="my-auto w-full max-w-md animate-scale-in rounded-modal bg-warm-white p-6 max-h-[85vh] overflow-y-auto scrollbar-hide"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">
@@ -142,16 +147,36 @@ export function SubscriptionFormModal({
             <label htmlFor="amount" className="text-sm font-medium text-slate">
               Monto
             </label>
-            <input
-              id="amount"
-              type="number"
-              step="0.01"
-              min="0.01"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-slate/40"
-              required
-            />
+            <div className="flex gap-2">
+              <input
+                id="amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="min-w-0 flex-1 rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-slate/40"
+                required
+              />
+              <select
+                aria-label="Moneda"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as Currency)}
+                className="rounded-input border border-bone bg-ivory px-3 py-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-slate/40"
+              >
+                {(Object.keys(CURRENCY_LABELS) as Currency[]).map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {currency !== settings.currency && (
+              <p className="text-xs text-stone">
+                Se convertirá a {CURRENCY_LABELS[settings.currency]} al tipo de cambio del día cuando
+                marques la suscripción como pagada.
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
