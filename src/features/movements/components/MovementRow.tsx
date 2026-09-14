@@ -1,4 +1,4 @@
-import { ArrowRightLeft, Pencil, Trash2 } from 'lucide-react'
+import { ArrowRightLeft, HandCoins, Pencil, Repeat, Trash2 } from 'lucide-react'
 import type { Movement } from '../types'
 import { useSettings } from '../../../lib/settings/useSettings'
 import { formatCurrency } from '../../../lib/format'
@@ -41,11 +41,23 @@ export function MovementRow({ movement, onEdit, onDelete }: MovementRowProps) {
         )}
         <div>
           <p className="text-charcoal">{title}</p>
-          <p className="text-xs text-stone">
+          <p className="flex items-center gap-1 text-xs text-stone">
             {dateFormatter.format(new Date(`${movement.date}T00:00:00`))} · {movement.account_name}
             {movement.type === 'transferencia' && movement.transfer_account_name
               ? ` → ${movement.transfer_account_name}`
               : ''}
+            {movement.subscription_name && (
+              <span className="ml-1 flex items-center gap-0.5 text-stone">
+                <Repeat size={11} />
+                {movement.subscription_name}
+              </span>
+            )}
+            {movement.debt_name && (
+              <span className="ml-1 flex items-center gap-0.5 text-stone">
+                <HandCoins size={11} />
+                {movement.debt_name}
+              </span>
+            )}
           </p>
         </div>
       </div>
