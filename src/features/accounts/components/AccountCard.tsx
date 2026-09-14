@@ -15,8 +15,8 @@ interface AccountCardProps {
 export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: AccountCardProps) {
   const { settings } = useSettings()
   return (
-    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 rounded-card border border-bone bg-ivory p-5">
-      <div className="flex min-w-0 flex-1 items-center gap-3">
+    <div className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-center gap-3">
         {dragHandleProps && (
           <button
             {...dragHandleProps}
@@ -42,7 +42,7 @@ export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: Acco
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between gap-4 sm:justify-end">
         {account.type === 'credito' && account.credit_limit ? (
           <div className="text-right">
             <span className="block font-medium text-charcoal">

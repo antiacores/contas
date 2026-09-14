@@ -79,19 +79,19 @@ export function ProfileSection() {
         <label htmlFor="new-email" className="text-sm font-medium text-slate">
           Cambiar correo
         </label>
-        <div className="flex gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
           <input
             id="new-email"
             type="email"
             value={newEmail}
             onChange={(e) => setNewEmail(e.target.value)}
             placeholder="nuevo@correo.com"
-            className="flex-1 rounded-input border border-bone bg-warm-white px-4 py-2.5 text-charcoal placeholder:text-stone focus:outline-none focus:ring-2 focus:ring-slate/40"
+            className="min-w-0 rounded-input border border-bone bg-warm-white px-4 py-2.5 text-charcoal placeholder:text-stone focus:outline-none focus:ring-2 focus:ring-slate/40 sm:flex-1"
           />
           <button
             type="submit"
             disabled={emailLoading}
-            className="rounded-button bg-charcoal px-4 py-2.5 text-sm font-medium text-warm-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            className="shrink-0 rounded-button bg-charcoal px-4 py-2.5 text-sm font-medium text-warm-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {emailLoading ? 'Enviando…' : 'Actualizar'}
           </button>

@@ -21,8 +21,8 @@ export function DebtCard({ debt, onRegisterPayment, onToggleActive, onEdit, onDe
 
   return (
     <div className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-5">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+  <div className="flex min-w-0 items-center gap-2">
           <span
             aria-hidden="true"
             className="h-3 w-3 shrink-0 rounded-full"
@@ -87,7 +87,7 @@ export function DebtCard({ debt, onRegisterPayment, onToggleActive, onEdit, onDe
       </div>
 
       {debt.active && !isPaidOff && (
-        <div className="flex flex-wrap items-center justify-between gap-2">
+  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm text-stone">
             Pago mensual {formatCurrency(debt.monthly_payment, settings.currency)} · próximo:{' '}
             {dateFormatter.format(new Date(`${debt.next_due_date}T00:00:00`))}
