@@ -27,8 +27,8 @@ export function SubscriptionCard({
 
   return (
     <div className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-5">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+  <div className="flex min-w-0 items-center gap-3">
           <SubscriptionLogo name={subscription.name} fallbackColor={subscription.color} size={36} />
           <div className="flex items-center gap-2">
             <span className="font-medium text-charcoal">{subscription.name}</span>
@@ -74,7 +74,7 @@ export function SubscriptionCard({
       </div>
 
       {subscription.active && (
-        <div className="flex flex-wrap items-center justify-between gap-2">
+  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <span className={isOverdue ? 'text-sm font-medium text-error' : isSoon ? 'text-sm font-medium text-warning' : 'text-sm text-stone'}>
             {isOverdue
               ? `Venció el ${dateFormatter.format(new Date(`${subscription.next_payment_date}T00:00:00`))}`
