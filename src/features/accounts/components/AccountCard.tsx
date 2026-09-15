@@ -2,7 +2,6 @@ import { GripVertical, Pencil, Trash2 } from 'lucide-react'
 import type { HTMLAttributes } from 'react'
 import { ACCOUNT_TYPE_LABELS, type Account } from '../types'
 import { BankBadge } from './BankBadge'
-import { useSettings } from '../../../lib/settings/useSettings'
 import { formatCurrency } from '../../../lib/format'
 
 interface AccountCardProps {
@@ -13,7 +12,6 @@ interface AccountCardProps {
 }
 
 export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: AccountCardProps) {
-  const { settings } = useSettings()
   return (
     <div className="flex flex-col gap-3 rounded-card border border-bone bg-ivory p-5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-3">
@@ -46,16 +44,16 @@ export function AccountCard({ account, onEdit, onDelete, dragHandleProps }: Acco
         {account.type === 'credito' && account.credit_limit ? (
           <div className="text-right">
             <span className="block font-medium text-charcoal">
-              {formatCurrency(Math.max(account.credit_limit + account.current_balance, 0), settings.currency)}
+              {formatCurrency(Math.max(account.credit_limit + account.current_balance, 0), account.currency)}
               <span className="ml-1 text-xs font-normal text-stone">disponible</span>
             </span>
             <span className="text-xs text-stone">
-              de {formatCurrency(account.credit_limit, settings.currency)}
+              de {formatCurrency(account.credit_limit, account.currency)}
             </span>
           </div>
         ) : (
           <span className="font-medium text-charcoal">
-            {formatCurrency(account.current_balance, settings.currency)}
+            {formatCurrency(account.current_balance, account.currency)}
           </span>
         )}
         <div className="flex gap-1">

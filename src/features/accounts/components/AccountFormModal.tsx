@@ -3,6 +3,7 @@ import { X } from 'lucide-react'
 import { ACCOUNT_TYPE_LABELS, type Account, type AccountInput, type AccountType } from '../types'
 import { BANKS, getBankById } from '../banks'
 import { useSettings } from '../../../lib/settings/useSettings'
+import { CURRENCY_LABELS, type Currency } from '../../../lib/settings/types'
 
 interface AccountFormModalProps {
   account: Account | null // null = crear nueva; con valor = editar
@@ -17,6 +18,7 @@ const COLOR_OPTIONS = ['#817768', '#A89D8D', '#6F8E72', '#8A9AA5', '#C69B5B', '#
 export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModalProps) {
   const { settings } = useSettings()
   const [name, setName] = useState(account?.name ?? '')
+  const [currency, setCurrency] = useState<Currency>((account?.currency as Currency) ?? settings.currency)
   const initialBank = account?.bank ?? ''
   const initialKnownBank = getBankById(initialBank)
   const [bankId, setBankId] = useState(initialKnownBank ? initialKnownBank.id : initialBank ? 'otro' : '')
@@ -93,7 +95,7 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
         color,
         initial_balance: parsedInitialBalance,
         credit_limit: isCredit ? parsedCreditLimit : null,
-        currency: account?.currency ?? settings.currency,
+        currency,
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar la cuenta.')
@@ -193,6 +195,30 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
             </select>
           </div>
 
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="currency" className="text-sm font-medium text-slate">
+              Moneda
+            </label>
+            <select
+              id="currency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value as Currency)}
+              className="rounded-input border border-bone bg-ivory px-4 py-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-slate/40"
+            >
+              {(Object.keys(CURRENCY_LABELS) as Currency[]).map((code) => (
+                <option key={code} value={code}>
+                  {CURRENCY_LABELS[code]}
+                </option>
+              ))}
+            </select>
+            {currency !== settings.currency && (
+              <p className="text-xs text-stone">
+                Esta cuenta se mostrará en {currency}. En el Dashboard, se convierte a{' '}
+                {settings.currency} al tipo de cambio del día para los totales.
+              </p>
+            )}
+          </div>
+
           {isCredit ? (
             <>
               <div className="flex flex-col gap-1.5">
@@ -262,7 +288,7 @@ export function AccountFormModal({ account, onClose, onSubmit }: AccountFormModa
           <fieldset className="flex flex-col gap-1.5">
             <legend className="text-sm font-medium text-slate">Color</legend>
             <div className="flex flex-wrap gap-2">
-  {COLOR_OPTIONS.map((option) => (
+              {COLOR_OPTIONS.map((option) => (
                 <button
                   key={option}
                   type="button"
