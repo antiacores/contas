@@ -64,7 +64,7 @@ export function MovementRow({ movement, onEdit, onDelete }: MovementRowProps) {
 
       <div className="flex items-center gap-3">
         <span className={`font-medium ${amount < 0 ? 'text-error' : 'text-success'}`}>
-          {formatCurrency(amount, settings.currency)}
+          {formatCurrency(amount, movement.account_currency ?? settings.currency)}
         </span>
         <div className="flex gap-1">
           <button

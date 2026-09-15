@@ -11,6 +11,8 @@ import { MonthlyTrendChart } from '../statistics/components/MonthlyTrendChart'
 import { NetWorthTrendChart } from '../statistics/components/NetWorthTrendChart'
 import { PeriodSelector } from '../budgets/components/PeriodSelector'
 import { currentPeriod, type BudgetPeriod } from '../budgets/types'
+import { useSettings } from '../../lib/settings/useSettings'
+import { useCurrencyRates } from '../../lib/useCurrencyRates'
 
 function startOfMonth(): string {
   const now = new Date()
@@ -18,12 +20,22 @@ function startOfMonth(): string {
 }
 
 export function DashboardPage() {
+  const { settings } = useSettings()
   const { accounts, loading: accountsLoading } = useAccounts()
   const { movements: recentMovements, loading: recentLoading } = useMovements(DEFAULT_FILTERS, 5)
   const { movements: monthMovements, loading: monthLoading } = useMovements({
     ...DEFAULT_FILTERS,
     dateFrom: startOfMonth(),
   })
+
+  // Si tienes cuentas en más de una moneda, convertimos todo a tu moneda
+  // principal (con el tipo de cambio del día) antes de sumar los totales —
+  // cada cuenta individual se sigue mostrando en la suya propia.
+  const currenciesInUse = [
+    ...accounts.map((a) => a.currency),
+    ...monthMovements.map((m) => m.account_currency ?? settings.currency),
+  ]
+  const { convert } = useCurrencyRates(currenciesInUse, settings.currency)
 
   const [categoryPeriod, setCategoryPeriod] = useState<BudgetPeriod>(currentPeriod())
   const { categoryBreakdown, monthlyTotals, netWorthHistory, loading: statsLoading } =
@@ -35,17 +47,22 @@ export function DashboardPage() {
   const saldo =
     accounts.length === 0
       ? null
-      : accounts.filter((a) => a.type !== 'credito').reduce((sum, a) => sum + a.current_balance, 0)
+      : accounts
+          .filter((a) => a.type !== 'credito')
+          .reduce((sum, a) => sum + convert(a.current_balance, a.currency), 0)
 
   const patrimonio =
-    accounts.length === 0 ? null : accounts.reduce((sum, a) => sum + a.current_balance, 0)
+    accounts.length === 0
+      ? null
+      : accounts.reduce((sum, a) => sum + convert(a.current_balance, a.currency), 0)
 
   const balanceMensual =
     monthMovements.length === 0
       ? null
       : monthMovements.reduce((sum, m) => {
-          if (m.type === 'ingreso') return sum + m.amount
-          if (m.type === 'gasto') return sum - m.amount
+          const amount = convert(m.amount, m.account_currency ?? settings.currency)
+          if (m.type === 'ingreso') return sum + amount
+          if (m.type === 'gasto') return sum - amount
           return sum // transferencias y ajustes no cuentan como flujo del mes
         }, 0)
 

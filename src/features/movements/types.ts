@@ -14,6 +14,7 @@ export interface Movement {
   date: string
   created_at: string
   account_name?: string
+  account_currency?: string // moneda de la cuenta de origen — cada movimiento se muestra en su propia moneda
   transfer_account_name?: string | null
   category_name?: string | null
   category_color?: string | null

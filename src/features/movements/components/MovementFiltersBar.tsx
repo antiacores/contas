@@ -41,22 +41,29 @@ export function MovementFiltersBar({ filters, accounts, onChange }: MovementFilt
         ))}
       </select>
 
-      {/* Las dos fechas siempre van juntas, en su propia fila. */}
+      {/* Las dos fechas siempre van juntas, en su propia fila. El "look" de
+          pastilla vive en el <div> contenedor, no en el <input> directamente —
+          en iOS Safari, los inputs de fecha nativos ignoran parte del borde/radio
+          personalizado, así que envolverlos evita que se vean pegados sin separación. */}
       <div className="grid grid-cols-2 gap-2">
-        <input
-          aria-label="Desde"
-          type="date"
-          value={filters.dateFrom ?? ''}
-          onChange={(e) => onChange({ ...filters, dateFrom: e.target.value || null })}
-          className={inputClass}
-        />
-        <input
-          aria-label="Hasta"
-          type="date"
-          value={filters.dateTo ?? ''}
-          onChange={(e) => onChange({ ...filters, dateTo: e.target.value || null })}
-          className={inputClass}
-        />
+        <div className="rounded-input border border-bone bg-ivory px-3 py-2">
+          <input
+            aria-label="Desde"
+            type="date"
+            value={filters.dateFrom ?? ''}
+            onChange={(e) => onChange({ ...filters, dateFrom: e.target.value || null })}
+            className="w-full bg-transparent text-sm text-charcoal focus:outline-none"
+          />
+        </div>
+        <div className="rounded-input border border-bone bg-ivory px-3 py-2">
+          <input
+            aria-label="Hasta"
+            type="date"
+            value={filters.dateTo ?? ''}
+            onChange={(e) => onChange({ ...filters, dateTo: e.target.value || null })}
+            className="w-full bg-transparent text-sm text-charcoal focus:outline-none"
+          />
+        </div>
       </div>
     </div>
   )
