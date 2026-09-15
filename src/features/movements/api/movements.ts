@@ -3,7 +3,7 @@ import type { Movement, MovementFilters, MovementInput } from '../types'
 
 const SELECT_WITH_JOINS = `
   *,
-  account:accounts!movements_account_id_fkey(name),
+  account:accounts!movements_account_id_fkey(name, currency),
   transfer_account:accounts!movements_transfer_account_id_fkey(name),
   category:categories(name, color),
   subscription:subscriptions(name),
@@ -16,6 +16,7 @@ function mapRow(row: any): Movement {
   return {
     ...row,
     account_name: row.account?.name,
+    account_currency: row.account?.currency,
     transfer_account_name: row.transfer_account?.name ?? null,
     category_name: row.category?.name ?? null,
     category_color: row.category?.color ?? null,

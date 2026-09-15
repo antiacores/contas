@@ -55,7 +55,7 @@ export function RecentMovementsCard({ movements, loading, compact = false }: Rec
                 <span
                   className={`shrink-0 pl-2 text-sm font-medium ${amount < 0 ? 'text-error' : 'text-success'}`}
                 >
-                  {formatCurrency(amount, settings.currency)}
+                  {formatCurrency(amount, movement.account_currency ?? settings.currency)}
                 </span>
               </li>
             )
