@@ -28,3 +28,14 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/suscripciones', label: 'Suscripciones', icon: Repeat },
   { to: '/deudas', label: 'Deudas', icon: HandCoins },
 ]
+
+// Barra de abajo en móvil: solo 4 destinos (más el botón "+" central, que no
+// es una ruta de navegación sino la acción de agregar movimiento). Categorías
+// se edita desde dentro de Presupuestos; Ahorros/Suscripciones/Deudas se
+// acceden como accesos rápidos desde el Dashboard.
+export const MOBILE_NAV_ITEMS: NavItem[] = [
+  { to: '/', label: 'Inicio', icon: LayoutDashboard },
+  { to: '/movimientos', label: 'Movimientos', icon: ArrowRightLeft },
+  { to: '/presupuestos', label: 'Presupuestos', icon: Gauge },
+  { to: '/cuentas', label: 'Cuentas', icon: Wallet },
+]
