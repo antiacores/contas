@@ -100,7 +100,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             título vía PageHeader. pb-20 dejar espacio para no tapar contenido
             con la barra fija de abajo. */}
         <FloatingProfileButton />
-        <main className="min-w-0 flex-1 pb-20 pt-[env(safe-area-inset-top)] md:pb-0 md:pt-0">{children}</main>
+        <main className="min-w-0 flex-1 pb-20 pt-[calc(env(safe-area-inset-top)+0.75rem)] md:pb-0 md:pt-0">{children}</main>
         <BottomNav />
       </div>
     </div>
