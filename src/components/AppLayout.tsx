@@ -1,8 +1,9 @@
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
 import { NAV_ITEMS } from './navItems'
 import { useAuth } from '../lib/auth/useAuth'
+import { BottomNav } from './BottomNav'
+import { FloatingProfileButton } from './FloatingProfileButton'
 
 function isActive(pathname: string, to: string, matchPrefix?: boolean): boolean {
   if (to === '/') return pathname === '/'
@@ -13,7 +14,7 @@ function Logo() {
   return <img src="/apple-touch-icon.png" alt="" className="h-7 w-7 shrink-0 rounded-md" />
 }
 
-function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+function NavLinks() {
   const { pathname } = useLocation()
 
   return (
@@ -25,7 +26,6 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           <Link
             key={item.to}
             to={item.to}
-            onClick={onNavigate}
             className={`flex items-center gap-3 rounded-button px-3 py-2.5 text-sm font-medium transition-colors ${
               active ? 'bg-charcoal text-warm-white' : 'text-charcoal hover:bg-bone'
             }`}
@@ -39,9 +39,10 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   )
 }
 
-// Botón de perfil: foto de Google si iniciaste sesión así, o la inicial de tu
-// nombre/correo como respaldo. Vive fijo al fondo del menú y lleva a Configuración.
-function ProfileButton({ onNavigate }: { onNavigate?: () => void }) {
+// Botón de perfil del sidebar de escritorio: foto de Google si iniciaste
+// sesión así, o la inicial de tu nombre/correo como respaldo. En móvil este
+// mismo rol lo cumple FloatingProfileButton (esquina superior derecha).
+function ProfileButton() {
   const { user } = useAuth()
   const { pathname } = useLocation()
 
@@ -53,7 +54,6 @@ function ProfileButton({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <Link
       to="/configuracion"
-      onClick={onNavigate}
       className={`flex items-center gap-3 rounded-button px-3 py-2.5 text-sm font-medium transition-colors ${
         active ? 'bg-charcoal text-warm-white' : 'text-charcoal hover:bg-bone'
       }`}
@@ -80,11 +80,9 @@ function ProfileButton({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 export function AppLayout({ children }: { children: ReactNode }) {
-  const [drawerOpen, setDrawerOpen] = useState(false)
-
   return (
     <div className="flex min-h-screen bg-warm-white">
-      {/* Sidebar fija — solo desde md hacia arriba (tablet/laptop) */}
+      {/* Sidebar fija — solo desde md hacia arriba (tablet/laptop). Sin cambios. */}
       <aside className="hidden md:sticky md:top-0 md:flex md:h-screen md:w-60 md:shrink-0 md:flex-col md:overflow-y-auto md:border-r md:border-bone md:bg-ivory">
         <div className="flex items-center gap-2 px-6 py-6">
           <Logo />
@@ -97,57 +95,13 @@ export function AppLayout({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Barra superior — solo en móvil, con botón de menú */}
-        <header className="flex items-center justify-between border-b border-bone bg-warm-white px-4 py-4 md:hidden">
-          <button
-            onClick={() => setDrawerOpen(true)}
-            aria-label="Abrir menú"
-            className="rounded-button p-2 text-charcoal hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
-          >
-            <Menu size={22} />
-          </button>
-          <div className="flex items-center gap-2">
-            <Logo />
-            <span className="font-semibold text-charcoal">Contas</span>
-          </div>
-          <span className="w-9" aria-hidden="true" /> {/* espaciador para centrar el título */}
-        </header>
-
-        {/* Drawer — overlay que se abre desde la izquierda, solo en móvil */}
-        {drawerOpen && (
-          <div
-            className="fixed inset-0 z-50 md:hidden"
-            role="dialog"
-            aria-modal="true"
-            onClick={() => setDrawerOpen(false)}
-          >
-            <div className="absolute inset-0 animate-fade-in bg-charcoal/40" />
-            <div
-              className="absolute left-0 top-0 flex h-screen w-64 animate-slide-in-left flex-col overflow-y-auto bg-ivory pt-6"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="mb-4 flex items-center justify-between px-6">
-                <div className="flex items-center gap-2">
-                  <Logo />
-                  <span className="text-lg font-semibold text-charcoal">Contas</span>
-                </div>
-                <button
-                  onClick={() => setDrawerOpen(false)}
-                  aria-label="Cerrar menú"
-                  className="rounded-button p-1 text-taupe hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              <NavLinks onNavigate={() => setDrawerOpen(false)} />
-              <div className="mt-auto border-t border-bone p-3">
-                <ProfileButton onNavigate={() => setDrawerOpen(false)} />
-              </div>
-            </div>
-          </div>
-        )}
-
-        <main className="min-w-0 flex-1">{children}</main>
+        {/* En móvil: sin barra superior — el avatar flotante y la barra de
+            abajo cubren navegación y perfil; cada pantalla ya trae su propio
+            título vía PageHeader. pb-20 dejar espacio para no tapar contenido
+            con la barra fija de abajo. */}
+        <FloatingProfileButton />
+        <main className="min-w-0 flex-1 pb-20 md:pb-0">{children}</main>
+        <BottomNav />
       </div>
     </div>
   )

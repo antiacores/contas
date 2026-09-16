@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useMovements } from './useMovements'
 import { createMovement, deleteMovement, updateMovement } from './api/movements'
 import { useAccounts } from '../accounts/useAccounts'
@@ -31,6 +31,18 @@ export function MovementsPage() {
   const { categories } = useCategories()
   const [editingMovement, setEditingMovement] = useState<Movement | null | undefined>(undefined)
   const [deletingMovement, setDeletingMovement] = useState<Movement | null>(null)
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  // El botón "+" de la barra de abajo navega aquí con este estado para
+  // abrir el formulario de una — sin importar desde qué pantalla vinieras.
+  useEffect(() => {
+    if ((location.state as { openNew?: boolean } | null)?.openNew) {
+      setEditingMovement(null)
+      navigate(location.pathname, { replace: true, state: {} })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state])
 
   async function handleSubmit(input: MovementInput) {
     if (editingMovement) {

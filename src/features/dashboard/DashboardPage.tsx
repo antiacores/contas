@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Wallet, TrendingUp, Scale } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Wallet, TrendingUp, Scale, PiggyBank, Repeat, HandCoins, type LucideIcon } from 'lucide-react'
 import { SummaryCard } from './components/SummaryCard'
 import { RecentMovementsCard } from './components/RecentMovementsCard'
 import { useAccounts } from '../accounts/useAccounts'
@@ -18,6 +19,22 @@ function startOfMonth(): string {
   const now = new Date()
   return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
 }
+
+interface QuickAccessItem {
+  to: string
+  label: string
+  icon: LucideIcon
+  color: string
+}
+
+// Con la barra de abajo reducida a 4 destinos + el botón "+", Ahorros,
+// Suscripciones y Deudas ya no viven en la navegación permanente — su acceso
+// directo vive aquí, como cards, no como simples links de texto.
+const QUICK_ACCESS: QuickAccessItem[] = [
+  { to: '/ahorros', label: 'Ahorros', icon: PiggyBank, color: '#6F8E72' },
+  { to: '/suscripciones', label: 'Suscripciones', icon: Repeat, color: '#8A9AA5' },
+  { to: '/deudas', label: 'Deudas', icon: HandCoins, color: '#A7645C' },
+]
 
 export function DashboardPage() {
   const { settings } = useSettings()
@@ -89,6 +106,29 @@ export function DashboardPage() {
           icon={<Scale size={18} strokeWidth={2} className="text-stone" />}
         />
         <RecentMovementsCard movements={recentMovements} loading={recentLoading} compact />
+      </div>
+
+      {/* Accesos rápidos: Ahorros, Suscripciones y Deudas ya no están en el
+          menú permanente — viven aquí como cards. */}
+      <div className="grid grid-cols-3 gap-3">
+        {QUICK_ACCESS.map((item) => {
+          const Icon = item.icon
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="flex flex-col items-center gap-2 rounded-card border border-bone bg-ivory px-3 py-4 text-center hover:bg-bone/40"
+            >
+              <span
+                className="flex h-10 w-10 items-center justify-center rounded-full"
+                style={{ backgroundColor: `${item.color}26` }}
+              >
+                <Icon size={18} strokeWidth={2} style={{ color: item.color }} />
+              </span>
+              <span className="text-sm font-medium text-charcoal">{item.label}</span>
+            </Link>
+          )
+        })}
       </div>
 
       {/* Gráficas — gastos por categoría e ingresos/gastos lado a lado en laptop. */}

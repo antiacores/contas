@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Tag } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useBudgets } from './useBudgets'
 import { createBudget, deleteBudget, updateBudget } from './api/budgets'
@@ -50,14 +50,23 @@ export function BudgetsPage() {
       <PageHeader
         title="Presupuestos"
         action={
-          <button
-            onClick={() => setEditingBudget(null)}
-            disabled={noGastoCategories || noAvailableCategories}
-            className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <Plus size={16} />
-            Nuevo presupuesto
-          </button>
+          <div className="flex gap-2">
+            <Link
+              to="/categorias"
+              className="flex items-center gap-2 rounded-button border border-bone bg-ivory px-4 py-2 text-sm font-medium text-charcoal hover:bg-bone focus:outline-none focus:ring-2 focus:ring-slate/40"
+            >
+              <Tag size={16} />
+              Editar categorías
+            </Link>
+            <button
+              onClick={() => setEditingBudget(null)}
+              disabled={noGastoCategories || noAvailableCategories}
+              className="flex items-center gap-2 rounded-button bg-charcoal px-4 py-2 text-sm font-medium text-warm-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate/40 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <Plus size={16} />
+              Nuevo presupuesto
+            </button>
+          </div>
         }
       />
 
