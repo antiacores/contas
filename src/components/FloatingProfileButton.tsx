@@ -15,7 +15,8 @@ export function FloatingProfileButton() {
     <Link
       to="/configuracion"
       aria-label="Configuración"
-      className="fixed right-4 top-4 z-40 md:hidden"
+      className="fixed right-4 z-40 md:hidden"
+style={{ top: 'max(1rem, env(safe-area-inset-top))' }}
     >
       {avatarUrl ? (
         <img
